@@ -98,4 +98,54 @@ Example:
   }
 }
 ```
-````
+## Endpoint: `/users/profile`
+
+### Description
+This endpoint is used to get the profile of the authenticated user.
+
+### Method
+`GET`
+
+### Headers
+- `Authorization`: Bearer token (required)
+
+### Example Response
+The response will be a JSON object containing the user data:
+- `_id`: The user's unique identifier
+- `fullName`: An object containing:
+  - `firstName`: The user's first name
+  - `lastName`: The user's last name
+- `email`: The user's email address
+
+Example:
+```json
+{
+  "_id": "user_id_here",
+  "fullName": {
+    "firstName": "John",
+    "lastName": "Doe"
+  },
+  "email": "john.doe@example.com"
+}
+```
+
+## Endpoint: `/users/logout`
+
+### Description
+This endpoint is used to log out the authenticated user. It clears the authentication token from the cookies and adds the token to a blacklist.
+
+### Method
+`GET`
+
+### Headers
+- `Authorization`: Bearer token (required) or cookie token required
+
+### Example Response
+The response will be a JSON object with a message indicating successful logout.
+
+Example:
+```json
+{
+  "message": "Logged Out Successfully"
+}
+

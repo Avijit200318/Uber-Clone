@@ -3,8 +3,13 @@ import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 export const authUserMiddleware = async (req, res, next) => {
-    const token = req.cookies.token || req.headers.authorization.split(' ')[1];
+    const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
+
     if(!token) return res.status(401).json({message: "Unauthorized"});
+
+    // update the authUserMiddleware function to check if the token is blacklisted or not
+    const isBlackListed = await userModel.findOne({token: token})
+    if(isBlackListed) return res.status(401).json({message: "Unauthorized"});
 
     try{
         const decoded = jwt.verify(token, process.env.JWT_SECRECT);

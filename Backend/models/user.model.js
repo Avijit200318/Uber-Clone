@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema({
 })
 
 userSchema.methods.generateAuthToken = function () {
-    const token = jwt.sign({ _id: this._id }, process.env.JWT_SECRECT);
+    const token = jwt.sign({ _id: this._id }, process.env.JWT_SECRECT, { expiresIn: "24h" });
     return token;
     // this. is did't work for => function. it only work for normal javascript function.
 };
