@@ -1,7 +1,7 @@
 import express from "express";
 import { body } from "express-validator";
 // this package help us to validate data that is comming from the frontend. we have to write it after the /signup like route using [].
-import { signUp } from "../controllers/user.controller.js";
+import { signUp, login } from "../controllers/user.controller.js";
 
 const router = express.Router();
 
@@ -11,6 +11,13 @@ router.post('/signUp', [
     body('password').isLength({min: 6}).withMessage('Password length must be greater than 6'),
 ],
     signUp
-)
+);
+
+router.post('/login', [
+    body('email').isEmail().withMessage('Invalid Message'),
+    body('password').isLength({min: 6}).withMessage('Password must be greater thatn 6'),
+],
+    login
+);
 
 export default router;

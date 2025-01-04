@@ -33,9 +33,10 @@ const userSchema = new mongoose.Schema({
 userSchema.methods.generateAuthToken = function () {
     const token = jwt.sign({ _id: this._id }, process.env.JWT_SECRECT);
     return token;
+    // this. is did't work for => function. it only work for normal javascript function.
 };
 
-userSchema.methods.comparePassword = async (password) => {
+userSchema.methods.comparePassword = async function (password) {
     return await bcryptjs.compareSync(password, this.password);
 }
 
