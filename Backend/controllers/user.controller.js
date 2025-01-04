@@ -48,9 +48,11 @@ export const login = async (req, res, next) => {
 
     const token = await user.generateAuthToken();
 
+    res.cookie("token", token, { httpOnly: true, });
+
     res.status(200).json({token, user});
 };
 
 export const getUserProfile = async (req, res, next) => {
-       
+    return res.status(200).json(req.user);
 }
