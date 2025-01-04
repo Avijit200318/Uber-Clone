@@ -24,7 +24,7 @@ export const signUp = async (req, res, next) => {
     const token = user.generateAuthToken();
 
     res.status(201).json({token, user});
-}
+};
 
 export const login = async (req, res, next) => {
     const errors = validationResult(req);
@@ -49,4 +49,8 @@ export const login = async (req, res, next) => {
     const token = await user.generateAuthToken();
 
     res.status(200).json({token, user});
+};
+
+export const getUserProfile = async (req, res, next) => {
+       
 }

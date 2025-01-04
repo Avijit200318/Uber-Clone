@@ -1,7 +1,7 @@
 import express from "express";
 import { body } from "express-validator";
 // this package help us to validate data that is comming from the frontend. we have to write it after the /signup like route using [].
-import { signUp, login } from "../controllers/user.controller.js";
+import { signUp, login, getUserProfile } from "../controllers/user.controller.js";
 
 const router = express.Router();
 
@@ -19,5 +19,7 @@ router.post('/login', [
 ],
     login
 );
+
+router.get("/profile", getUserProfile);
 
 export default router;
