@@ -5,6 +5,7 @@ import { connectToDB } from "./db/db.js";
 import cookieParser from "cookie-parser";
 
 import userRoutes from "./routes/user.route.js";
+import captainRoutes from "./routes/captain.route.js";
 
 dotenv.config();
 
@@ -25,5 +26,6 @@ app.get('/', (req, res) => {
 // add new created routes
 
 app.use("/users", userRoutes);
+app.use("/captains", captainRoutes);
 
 export default app;
