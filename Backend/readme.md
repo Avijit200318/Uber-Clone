@@ -224,3 +224,123 @@ Example:
   }
 }
 ```
+
+## Endpoint: `/captains/login`
+
+### Description
+This endpoint is used to log in an existing captain. It validates the input data, checks the captain's credentials, and returns a JSON Web Token (JWT) along with the captain data.
+
+### Method
+`POST`
+
+### Request Body
+The request body should be a JSON object with the following fields:
+- `email`: A valid email address (required)
+- `password`: A string with a minimum length of 6 characters (required)
+
+Example:
+```json
+{
+  "email": "jane.doe@example.com",
+  "password": "password123"
+}
+```
+
+### Example Response
+The response will be a JSON object with the following fields:
+- `token`: A JSON Web Token (JWT) for authentication
+- `captain`: An object containing the captain data:
+  - `_id`: The captain's unique identifier
+  - `fullName`: An object containing:
+    - `firstName`: The captain's first name
+    - `lastName`: The captain's last name
+  - `email`: The captain's email address
+  - `vehicle`: An object containing:
+    - `color`: The vehicle's color
+    - `plate`: The vehicle's plate
+    - `capacity`: The vehicle's capacity
+    - `vehicleType`: The vehicle's type
+
+Example:
+```json
+{
+  "token": "your_jwt_token_here",
+  "captain": {
+    "_id": "captain_id_here",
+    "fullName": {
+      "firstName": "Jane",
+      "lastName": "Doe"
+    },
+    "email": "jane.doe@example.com",
+    "vehicle": {
+      "color": "red",
+      "plate": "ABC123",
+      "capacity": 4,
+      "vehicleType": "car"
+    }
+  }
+}
+```
+
+## Endpoint: `/captains/profile`
+
+### Description
+This endpoint is used to get the profile of the authenticated captain.
+
+### Method
+`GET`
+
+### Headers
+- `Authorization`: Bearer token (required)
+
+### Example Response
+The response will be a JSON object containing the captain data:
+- `_id`: The captain's unique identifier
+- `fullName`: An object containing:
+  - `firstName`: The captain's first name
+  - `lastName`: The captain's last name
+- `email`: The captain's email address
+- `vehicle`: An object containing:
+  - `color`: The vehicle's color
+  - `plate`: The vehicle's plate
+  - `capacity`: The vehicle's capacity
+  - `vehicleType`: The vehicle's type
+
+Example:
+```json
+{
+  "_id": "captain_id_here",
+  "fullName": {
+    "firstName": "Jane",
+    "lastName": "Doe"
+  },
+  "email": "jane.doe@example.com",
+  "vehicle": {
+    "color": "red",
+    "plate": "ABC123",
+    "capacity": 4,
+    "vehicleType": "car"
+  }
+}
+```
+
+## Endpoint: `/captains/logout`
+
+### Description
+This endpoint is used to log out the authenticated captain. It clears the authentication token from the cookies and adds the token to a blacklist.
+
+### Method
+`GET`
+
+### Headers
+- `Authorization`: Bearer token (required) or cookie token required
+
+### Example Response
+The response will be a JSON object with a message indicating successful logout.
+
+Example:
+```json
+{
+  "message": "Logout successfully"
+}
+```

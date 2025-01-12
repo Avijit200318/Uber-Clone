@@ -1,7 +1,8 @@
 import express from "express";
 import { body } from "express-validator";
 
-import { signUpCaptain } from "../controllers/captain.controller.js";
+import { signUpCaptain, captainLogin, getCaptainProfile, captainLogout } from "../controllers/captain.controller.js";
+import { authCaptainMiddleware } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
@@ -16,5 +17,14 @@ router.post('/signUp', [
 ],
     signUpCaptain
 );
+
+router.post("/login", [
+    body('email').isEmail().withMessage('Invalid Email'),
+    body('password').isLength({min: 6}).withMessage('Password length must be greater than 6'),
+], captainLogin);
+
+router.get("/profile", authCaptainMiddleware, getCaptainProfile);
+
+router.get("/logout", authCaptainMiddleware, captainLogout);
 
 export default router;
