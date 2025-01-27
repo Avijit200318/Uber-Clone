@@ -25,7 +25,7 @@ app.get('/', (req, res) => {
 
 // add new created routes
 
-app.use("/users", userRoutes);
-app.use("/captains", captainRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/captains", captainRoutes);
 
 export default app;
