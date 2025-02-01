@@ -11,7 +11,6 @@ export default function UserLogin() {
   const dispatch = useDispatch();
   const {loading, error} = useSelector(state => state.user);
   const {currentUser} = useSelector(state => state.user);
-  console.log(currentUser);
 
   const handleChange = (e) => {
     setFormData({
@@ -40,6 +39,7 @@ export default function UserLogin() {
         return;
       }
       dispatch(signInSuccess(data.user));
+      localStorage.token = data.token;
       navigate("/home");
     }catch(error){
       dispatch(signInFailure(error.message));

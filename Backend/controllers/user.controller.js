@@ -58,8 +58,8 @@ export const login = async (req, res, next) => {
         const token = await user.generateAuthToken();
     
         const {password: pass, ...rest } = user._doc;
-        res.cookie("token", token, { httpOnly: true });
-    
+        res.cookie("token", token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
+
         res.status(200).json({token, user: rest});
     }catch(error){
         next(error);

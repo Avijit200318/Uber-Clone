@@ -6,6 +6,7 @@ import UserSignUp from './pages/UserSignUp';
 import CaptainLogin from './pages/CaptainLogin';
 import CaptainSignUp from './pages/CaptainSignUp';
 import Start from './pages/Start';
+import PrivateRoute from './components/PrivateRoute';
 
 export default function App() {
   return (
@@ -16,7 +17,9 @@ export default function App() {
         <Route path='/signup' element={<UserSignUp />} />
         <Route path='/captain-login' element={<CaptainLogin />} />
         <Route path='/captain-signup' element={<CaptainSignUp />} />
-        <Route path='/home' element={<Home />} />
+        <Route element={<PrivateRoute />}>
+          <Route path='/home' element={<Home />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   )
