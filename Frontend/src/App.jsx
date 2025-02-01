@@ -7,6 +7,7 @@ import CaptainLogin from './pages/CaptainLogin';
 import CaptainSignUp from './pages/CaptainSignUp';
 import Start from './pages/Start';
 import PrivateRoute from './components/PrivateRoute';
+import UserLogout from './components/UserLogout';
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
         <Route path='/captain-signup' element={<CaptainSignUp />} />
         <Route element={<PrivateRoute />}>
           <Route path='/home' element={<Home />} />
+          <Route path='/user/logout' element={<UserLogout />} />
         </Route>
       </Routes>
     </BrowserRouter>
