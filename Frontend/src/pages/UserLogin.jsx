@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import UberBlackLogo from '/images/uber logo.png';
 import {Link, useNavigate} from 'react-router-dom';
-import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { signInSuccess, signInFailure, signInStart } from '../redux/user/userSlice';
 
 export default function UserLogin() {
 
   const [formData, setFormData] = useState({});
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
+  const {loading, error} = useSelector(state => state.user);
+  const {currentUser} = useSelector(state => state.user);
+  console.log(currentUser);
 
   const handleChange = (e) => {
     setFormData({
@@ -20,8 +23,7 @@ export default function UserLogin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try{
-      setLoading(true);
-      setError(null);
+      dispatch(signInStart());
       const res = await fetch("/api/users/login", {
         method: 'POST',
         headers: {
@@ -33,18 +35,16 @@ export default function UserLogin() {
       const data = await res.json();
 
       if(data.success === false){
+        dispatch(signInFailure(data.message));
         console.log(data);
-        setError(data.message);
         return;
       }
+      dispatch(signInSuccess(data.user));
       navigate("/home");
     }catch(error){
+      dispatch(signInFailure(error.message));
       console.log(error.message);
-      setError(error.message);
     }
-    finally{
-      setLoading(false);
-  }
 }
   return (
     <div className='p-5 h-screen flex flex-col justify-between'>
