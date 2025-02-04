@@ -40,16 +40,17 @@ export default function UserSignUp() {
       });
 
       const data = await res.json();
-      if(res.status !== 201){
-        console.log(data);
+
+      if(data.success === false){
+        console.log(data.message);
         setLoading(false);
-        setError(data);
+        setError(data.message);
         return;
       }
       navigate("/login");
     }catch(error){
       console.log(error);
-      setError(error);
+      setError(error.message);
     }finally{
       setLoading(false);
     }
@@ -73,7 +74,7 @@ export default function UserSignUp() {
           <button className='bg-black text-white rounded px-4 py-2 border w-full text-lg font-semibold mb-2'>{loading? 'Loading...': 'Create Account'}</button>
         </form>
         <p className="text-center font-semibold">Already have an account? <Link className='text-blue-500' to='/login'>Login</Link></p>
-        {error && <p className='font-bold text-red-700 my-5 text-center'>{error.message? error.message : "Some Unexpected error happend"}</p>}
+        {error && <p className='font-bold text-red-700 my-3 text-center'>{(error && !Array.isArray(error))? error : "Please Enter Valid Details"}</p>}
       </div>
       {/* <div className="p-3">
         <Link to='/captain-signup' className="bg-[#10b461] flex items-center justify-center text-white rounded px-4 py-2 border w-full text-lg font-semibold">Sign In as Captain</Link>

@@ -10,7 +10,7 @@ import { errorHandler } from "../middlewares/error.js";
 export const signUp = async (req, res, next) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()){
-        return res.status(400).json({errors: errors.array()});
+        return next(errorHandler(400, errors.array()));
     }
 
     const {fullName, email, password} = req.body;
@@ -18,7 +18,7 @@ export const signUp = async (req, res, next) => {
     const isCaptainAlreadyExist = await userModel.findOne({email});
 
     if(isCaptainAlreadyExist){
-        return res.status(400).json({message: "User already exist"});
+        return next(errorHandler(400, "User already exist"));
     }
 
     const hashPassword = await userModel.hashPassword(password);
@@ -32,13 +32,14 @@ export const signUp = async (req, res, next) => {
 
     const token = user.generateAuthToken();
 
-    res.status(201).json({token, user});
+    const {password: pass, ...rest} = user._doc;
+    res.status(201).json({token, user: rest});
 };
 
 export const login = async (req, res, next) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()){
-        return res.status(400).json({ errors: errors.array() });
+        return next(errorHandler(400, errors.array()));
     }
 
     const {email, password} = req.body;
@@ -53,7 +54,7 @@ export const login = async (req, res, next) => {
     
         const isMatch = await user.comparePassword(password);
     
-        if(!isMatch) return next(errorHandler(401, "wrong password"));
+        if(!isMatch) return next(errorHandler(401, "Invalid password"));
     
         const token = await user.generateAuthToken();
     

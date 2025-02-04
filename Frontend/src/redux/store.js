@@ -1,9 +1,10 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import userReducer from './user/userSlice';
+import captainReducer from "./captain/captainSlice";
 import { persistReducer, persistStore } from 'redux-persist';
 import sessionStorage from 'redux-persist/lib/storage/session';
 
-const rootReducer = combineReducers({ user: userReducer });
+const rootReducer = combineReducers({ user: userReducer, captain: captainReducer });
 
 const persistConfig = {
   key: 'root',

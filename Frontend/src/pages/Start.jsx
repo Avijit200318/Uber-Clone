@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Uberlogo from "/images/uber logo.webp";
 import { Link } from 'react-router-dom';
 

@@ -2,11 +2,13 @@ import { createCaptain } from "../services/captain.service.js";
 import { validationResult } from "express-validator";
 import captainModel from "../models/captain.model.js";
 import blackListToken from "../models/blocklistToken.model.js";
+import { errorHandler } from "../middlewares/error.js";
 
 export const signUpCaptain = async (req, res, next) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()){
-        return res.status(400).json({errors: errors.array()});
+        // return res.status(400).json({errors: errors.array()});
+        return next(errorHandler(400, errors.array()))
     }
 
     const {fullName, email, password, vehicle} = req.body;
@@ -14,7 +16,7 @@ export const signUpCaptain = async (req, res, next) => {
     const isCaptainAlreadyExist = await captainModel.findOne({email});
 
     if(isCaptainAlreadyExist){
-        return res.status(400).json({message: "Captain already exist with this email"});
+        return next(errorHandler(400, "User already exist through this email"));
     }
 
     const hashedPassword = await captainModel.hashPassword(password);
@@ -32,7 +34,8 @@ export const signUpCaptain = async (req, res, next) => {
 
     const token = captain.generateAuthToken();
 
-    res.status(201).json({token, captain});
+    const {password: pass, ...rest} = captain._doc;
+    res.status(201).json({token, captain: rest});
 };
 
 export const captainLogin = async (req, res, next) => {
@@ -57,8 +60,8 @@ export const captainLogin = async (req, res, next) => {
     const token = captain.generateAuthToken();
 
     res.cookie("token", token);
-
-    res.status(200).json({token, captain});
+    const {password: pass, ...rest} = captain._doc;
+    res.status(200).json({token, captain: rest});
 };
 
 export const getCaptainProfile = async (req, res, next) => {
