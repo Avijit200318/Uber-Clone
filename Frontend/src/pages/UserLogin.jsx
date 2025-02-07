@@ -54,7 +54,11 @@ export default function UserLogin() {
           <input type="email" required placeholder='email@example.com' className="bg-[#eeeeee] rounded px-4 py-2 border w-full text-lg placeholder:text-base mb-7" id='email' onChange={handleChange} />
           <h3 className='text-lg font-semibold mb-2'>Password</h3>
           <input type="password" required placeholder='password' className="bg-[#eeeeee] rounded px-4 py-2 border w-full text-lg placeholder:text-base mb-7" id='password' onChange={handleChange} />
-          <button className='bg-black text-white rounded px-4 py-2 border w-full text-lg font-semibold mb-2'>{loading? 'Loading' : 'Login'}</button>
+          <button className='bg-black text-white rounded px-4 py-2 border w-full text-lg font-semibold mb-2'>{loading?
+          <div className='w-full h-full flex justify-center items-center z-50'>
+            <div className="border-4 border-t-4 border-t-white border-gray-300 rounded-full w-8 h-8 animate-spin"></div>
+          </div>
+          : 'Login'}</button>
         </form>
           <p className="text-center font-semibold">New here? <Link className='text-blue-500' to='/signup'>Create New Account</Link></p>
           {error && <p className='font-bold text-red-700 my-3 text-center'>{(error && !Array.isArray(error))? error : "Please Enter Valid Details"}</p>}

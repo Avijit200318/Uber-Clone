@@ -41,7 +41,7 @@ export const signUpCaptain = async (req, res, next) => {
 export const captainLogin = async (req, res, next) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()){
-        return res.status(400).json({errors: errors.array()});
+        return next(errorHandler(400, errors.array()));
     }
 
     const {email, password} = req.body;
@@ -49,12 +49,12 @@ export const captainLogin = async (req, res, next) => {
     const captain = await captainModel.findOne({email}).select("+password");
     
     if(!captain){
-        return res.status(400).json({message: "Invalid email or password"});
+        return next(errorHandler(400, "Invalid email or password"));
     }
 
     const isPasswordMatched = await captain.comparePassword(password);
     if(!isPasswordMatched){
-        return res.status(400).json({message: "Invalid password"});
+        return next(errorHandler(400, "Invalid Password"));
     }
 
     const token = captain.generateAuthToken();
