@@ -59,7 +59,7 @@ export const captainLogin = async (req, res, next) => {
 
     const token = captain.generateAuthToken();
 
-    res.cookie("token", token);
+    res.cookie("token", token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
     const {password: pass, ...rest} = captain._doc;
     res.status(200).json({token, captain: rest});
 };

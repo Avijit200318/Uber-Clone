@@ -39,7 +39,8 @@ export default function CaptainLogin() {
         return;
       }
       dispatch(captainSignInSuccess(data.captain));
-      navigate("/home");
+      localStorage.token = data.token;
+      navigate("/captain-home");
     }catch(error){
       dispatch(captainSignInFailure(error.message));
       console.log(error);
