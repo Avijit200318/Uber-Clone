@@ -10,6 +10,7 @@ import PrivateRoute from './components/PrivateRoute';
 import UserLogout from './components/UserLogout';
 import CaptainHome from './pages/CaptainHome';
 import CaptainPrivateRoute from './components/CaptainPrivateRoute';
+import Riding from './pages/Riding';
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
         <Route element={<PrivateRoute />}>
           <Route path='/home' element={<Home />} />
           <Route path='/user/logout' element={<UserLogout />} />
+          <Route path='/riding' element={<Riding />} />
         </Route>
         
         <Route element={<CaptainPrivateRoute />}>
