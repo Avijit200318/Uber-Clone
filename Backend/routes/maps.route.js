@@ -2,6 +2,7 @@ import express from "express";
 import { authCaptainMiddleware } from "../middlewares/auth.middleware.js";
 import { authUserMiddleware } from "../middlewares/auth.middleware.js";
 import { getCoordinate } from "../controllers/maps.controller.js";
+import { getDisTime } from "../controllers/maps.controller.js";
 
 import {query} from "express-validator";
 
@@ -21,6 +22,12 @@ router.get("/get-coordinates",
     query('address').isString().isLength({ min: 3 }),
     authEitherMiddleware,
     getCoordinate
+);
+
+router.get("/get-distance-time",
+    query('origin').isString().isLength({min: 3}),
+    authEitherMiddleware,
+    getDisTime
 );
 
 export default router;
