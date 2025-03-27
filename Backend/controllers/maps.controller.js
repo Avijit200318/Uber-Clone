@@ -1,4 +1,3 @@
-import { json } from "express";
 import { getAddressCordinate } from "../services/maps.service.js";
 import { validationResult } from "express-validator";
 
