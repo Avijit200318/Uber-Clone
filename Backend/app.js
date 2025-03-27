@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 
 import userRoutes from "./routes/user.route.js";
 import captainRoutes from "./routes/captain.route.js";
+import mapsRoutes from "./routes/maps.route.js";
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.get('/', (req, res) => {
 
 app.use("/api/users", userRoutes);
 app.use("/api/captains", captainRoutes);
+app.use("/api/maps", mapsRoutes);
 
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500;
