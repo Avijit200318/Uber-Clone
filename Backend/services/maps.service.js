@@ -8,7 +8,6 @@ export const getAddressCordinate = async (address) => {
 
     try {
         const response = await axios.get(url);
-        console.log(url);
 
         if (response.data.length > 0) {
             const location = response.data[0];
@@ -20,7 +19,7 @@ export const getAddressCordinate = async (address) => {
             throw new Error('Unable to fetch coordinates');
         }
     } catch (error) {
-        return res.status(401).json({message: "something went wrong",error});
+        throw new Error(`Error fetching distance and time: ${error.message}`);
     }
 };
 
@@ -29,13 +28,11 @@ export const getDistanceTimeService = async (origin, destination) => {
         return errorHandler(401, "Origin and destination are required");
     }
 
-    console.log("Origin:", origin, "Destination:", destination);
-
     const url = `https://api.openrouteservice.org/v2/directions/driving-car?api_key=${process.env.ORS_API_KEY}&start=${origin.lng},${origin.ltd}&end=${destination.lng},${destination.ltd}`;
 
     try {
         const response = await axios.get(url);
-        console.log(url)
+        // console.log(url)
         if (response.data.features && response.data.features.length > 0) {
             const segment = response.data.features[0].properties.segments[0];
 
@@ -49,5 +46,29 @@ export const getDistanceTimeService = async (origin, destination) => {
     } catch (error) {
         console.error("Error fetching distance and time:", error.message);
         throw new Error(`Error fetching distance and time: ${error.message}`);
+    }
+};
+
+export const getAutoCompleteSuggestion = async (input) => {
+    if(!input){
+        return errorHandler(400, "query is required");
+    }
+
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(input)}&countrycodes=IN&limit=5`;
+
+    try {
+        const response = await axios.get(url);
+
+        if (response.data.length > 0) {
+            return response.data.map((place) => ({
+                name: place.display_name,
+                ltd: parseFloat(place.lat),
+                lng: parseFloat(place.lon),
+            }));
+        } else {
+            return [];
+        }
+    } catch (error) {
+        throw new Error(`Error fetching autocomplete suggestions: ${error.message}`);
     }
 }

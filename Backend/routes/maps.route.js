@@ -3,6 +3,7 @@ import { authCaptainMiddleware } from "../middlewares/auth.middleware.js";
 import { authUserMiddleware } from "../middlewares/auth.middleware.js";
 import { getCoordinate } from "../controllers/maps.controller.js";
 import { getDisTime } from "../controllers/maps.controller.js";
+import { getSuggestion } from "../controllers/maps.controller.js";
 
 import {query} from "express-validator";
 
@@ -29,5 +30,11 @@ router.get("/get-distance-time",
     authEitherMiddleware,
     getDisTime
 );
+
+router.get("/get-suggestion",
+    query('input').isString().isLength({min: 3}),
+    authEitherMiddleware,
+    getSuggestion
+)
 
 export default router;

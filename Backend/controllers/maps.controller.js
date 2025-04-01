@@ -2,6 +2,7 @@ import { getAddressCordinate } from "../services/maps.service.js";
 import { validationResult } from "express-validator";
 import { errorHandler } from "../middlewares/error.js";
 import { getDistanceTimeService } from "../services/maps.service.js";
+import { getAutoCompleteSuggestion } from "../services/maps.service.js";
 
 export const getCoordinate = async (req, res, next) => {
     const errors = validationResult(req);
@@ -36,5 +37,21 @@ export const getDisTime = async (req, res, next) => {
         return res.status(200).json(distanceTime);
     }catch(error){
         next(error);
+    }
+};
+
+
+export const getSuggestion = async (req, res, next) => {
+    try{
+        const errors = validationResult(req);
+        if(!errors.isEmpty()){
+            return res.status(400).json({error: errors.array()});
+        }
+
+        const {input} = req.query;
+        const suggestion = await getAutoCompleteSuggestion(input);
+        res.status(200).json(suggestion);
+    }catch(error){
+
     }
 }
