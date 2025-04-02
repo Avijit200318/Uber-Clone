@@ -1,9 +1,10 @@
 import rideModel from "../models/ride.model.js";
 import {getDistanceTimeService, getAddressCordinate} from "./maps.service.js";
 import { errorHandler } from "../middlewares/error.js";
+import crypto from "crypto";
 
 
-export const getFair = async (pickup, destination) => {
+export const getFare = async (pickup, destination) => {
     if(!pickup || !destination){
         return errorHandler(400, "Pickup and destination are required");
     }
@@ -46,11 +47,16 @@ export const createRide = async({user, pickup, destination, vechicleType}) => {
         return errorHandler(400, "All fields are required");
     }
 
-    const fair = await getFair(pickup, destination);
+    const fare = await getFare(pickup, destination);
 
     const ride = rideModel.create({
-        user, pickup, destination, fare: fair[vechicleType]
+        user, pickup, destination, fare: fare[vechicleType], otp: getOtp(6)
     });
 
     return ride;
+}
+
+export const getOtp = (num) => {
+    const otp = crypto.randomInt(Math.pow(10, num-1), Math.pow(10, num)).toString();
+    return otp;
 }
