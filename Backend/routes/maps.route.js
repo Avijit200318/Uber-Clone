@@ -9,15 +9,24 @@ import {query} from "express-validator";
 
 const router = express.Router();
 
-const authEitherMiddleware = (req, res, next) => {
-    authCaptainMiddleware(req, res, (err) => {
-        if (!err) return next();
-        authUserMiddleware(req, res, (err) => {
-            if (!err) return next();
-            next(err || new Error("Unauthorized"));
+const authEitherMiddleware = async (req, res, next) => {
+    try {
+        await authCaptainMiddleware(req, res, (err) => {
+            if (!err) return next(); // If captain authentication is successful, proceed.
+
+            // If captain auth fails, try user auth.
+            authUserMiddleware(req, res, (err) => {
+                if (!err) return next(); // If user authentication is successful, proceed.
+
+                // If both fail, return Unauthorized error.
+                return next(errorHandler(401, "Unauthorized"));
+            });
         });
-    });
+    } catch (error) {
+        return next(errorHandler(401, "Unauthorized"));
+    }
 };
+
 
 router.get("/get-coordinates",
     query('address').isString().isLength({ min: 3 }),
