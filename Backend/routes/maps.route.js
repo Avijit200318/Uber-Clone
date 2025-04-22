@@ -4,6 +4,7 @@ import { authUserMiddleware } from "../middlewares/auth.middleware.js";
 import { getCoordinate } from "../controllers/maps.controller.js";
 import { getDisTime } from "../controllers/maps.controller.js";
 import { getSuggestion } from "../controllers/maps.controller.js";
+import { errorHandler } from "../middlewares/error.js";
 
 import {query} from "express-validator";
 
