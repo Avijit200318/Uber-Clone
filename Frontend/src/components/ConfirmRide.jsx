@@ -1,7 +1,14 @@
 import React from 'react'
 import uberCar from "/images/uber car.webp";
 
-export default function ConfirmRide({ setConfirmRidePanel, setVehicleFound, pickup, destination, selectedFare, vehicleImg}) {
+export default function ConfirmRide({ setConfirmRidePanel, setVehicleFound, pickup, destination, selectedFare, vehicleImg, createRide}) {
+
+  const handleConfirm = () => {
+    setVehicleFound(true);
+    setConfirmRidePanel(false);
+    createRide();
+  }
+
   return (
     <div>
       <h5 onClick={() => setConfirmRidePanel(false)} className="p-1 text-center absolute top-0 w-[93%] cursor-pointer"><i className="ri-arrow-down-wide-fill text-2xl text-gray-500"></i></h5>
@@ -26,12 +33,12 @@ export default function ConfirmRide({ setConfirmRidePanel, setVehicleFound, pick
           <div className="flex items-center gap-5 p-2">
           <i className="ri-money-rupee-circle-fill text-xl"></i>
             <div className="">
-              <h3 className='font-semibold text-lg'>₹ {selectedFare && selectedFare.toLocaleString('en-US')}</h3>
+              <h3 className='font-semibold text-lg'>₹{selectedFare && selectedFare.toLocaleString('en-US')}</h3>
               <p className='text-gray-600 text-sm -mt-1'>Cash Cash</p>
             </div>
           </div>
         </div>
-        <button onClick={()=>{setVehicleFound(true); setConfirmRidePanel(false)}} className="w-full mt-5 mt- bg-green-600 text-white font-semibold px-2 py-3 rounded-lg text-lg">Confirm</button>
+        <button onClick={handleConfirm} className="w-full mt-5 mt- bg-green-600 text-white font-semibold px-2 py-3 rounded-lg text-lg">Confirm</button>
       </div>
 
     </div>

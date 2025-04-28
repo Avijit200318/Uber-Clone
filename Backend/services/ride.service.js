@@ -1,16 +1,16 @@
 import rideModel from "../models/ride.model.js";
-import {getDistanceTimeService, getAddressCordinate} from "./maps.service.js";
+import { getDistanceTimeService, getAddressCordinate } from "./maps.service.js";
 import { errorHandler } from "../middlewares/error.js";
 import crypto from "crypto";
 
 
 export const getFare = async (pickup, destination) => {
-    if(!pickup || !destination){
+    if (!pickup || !destination) {
         return errorHandler(400, "Pickup and destination are required");
     }
 
-    const pickupCordinate = await getAddressCordinate(pickup);
-    const destinationCordinate = await getAddressCordinate(destination);
+    const pickupCordinate = { ltd: pickup.ltd, lng: pickup.lng };
+    const destinationCordinate = { ltd: destination.ltd, lng: destination.lng };
 
     const distanceTime = await getDistanceTimeService(pickupCordinate, destinationCordinate);
 
@@ -38,25 +38,26 @@ export const getFare = async (pickup, destination) => {
         car: Math.round(baseFare.car + (distanceTime.distance * perKmRate.car) + (distanceTime.duration * perMinuteRate.car)),
         bike: Math.round(baseFare.bike + (distanceTime.distance * perKmRate.bike) + (distanceTime.duration * perMinuteRate.bike))
     };
+
     return fare;
 };
 
 
-export const createRide = async({user, pickup, destination, vechicleType}) => {
-    if(!user || !pickup || !destination || !vechicleType){
+export const createRide = async ({ user, pickup, destination, vehicleType }) => {
+    if (!user || !pickup || !destination || !vehicleType) {
         return errorHandler(400, "All fields are required");
     }
 
     const fare = await getFare(pickup, destination);
 
     const ride = rideModel.create({
-        user, pickup, destination, fare: fare[vechicleType], otp: getOtp(6)
+        user, pickup:pickup.name, destination: destination.name, fare: fare[vehicleType], otp: getOtp(6)
     });
 
     return ride;
 }
 
 export const getOtp = (num) => {
-    const otp = crypto.randomInt(Math.pow(10, num-1), Math.pow(10, num)).toString();
+    const otp = crypto.randomInt(Math.pow(10, num - 1), Math.pow(10, num)).toString();
     return otp;
 }

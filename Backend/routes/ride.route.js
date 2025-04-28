@@ -7,9 +7,9 @@ const router = express.Router();
 
 
 router.post("/create",
-    body('pickup').isString().isLength({min: 3}).withMessage('Invalid pickup address'),
-    body('destination').isString().isLength({min: 3}).withMessage('Invalid destination address'),
-    body('vechicleType').isString().isIn(['auto', 'car', 'bike']).withMessage('Invalid vechile type'),
+    body('pickup').isObject().withMessage('Invalid pickup address'),
+    body('destination').isObject().withMessage('Invalid destination address'),
+    body('vehicleType').isString().isIn(['auto', 'car', 'bike']).withMessage('Invalid vechile type'),
     authUserMiddleware,
     createRideController
 );
