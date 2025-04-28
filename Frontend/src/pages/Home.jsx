@@ -13,8 +13,16 @@ import WaitingForDriver from '../components/WaitingForDriver';
 
 export default function Home() {
 
-  const [pickup, setPickup] = useState('');
-  const [destination, setDestination] = useState('');
+  const [pickup, setPickup] = useState({
+    name: '',
+    ltd: '',
+    lng: ''
+  });
+  const [destination, setDestination] = useState({
+    name: '',
+    ltd: '',
+    lng: ''
+  });
   const [panelOpen, setPanelOpen] = useState(false);
   const panelRef = useRef(null);
   const showBtnRef = useRef(null);
@@ -24,6 +32,9 @@ export default function Home() {
   const [waitingForDriver, setWaitingForDriver] = useState(false);
   const [suggestion, setSuggestion] = useState(null);
   const [activeField, setActiveField] = useState(null);
+  const [fare, setFare] = useState(null);
+  const [selectedFare, setSelectedFare] = useState(null);
+  const [vehicleImg, setVechicleImg] = useState(null);
   console.log(suggestion)
 
   const vehiclePanelRef = useRef(null);
@@ -137,7 +148,29 @@ export default function Home() {
     }
   }, [waitingForDriver]);
 
-  const handleFindTrip = () => {
+  const handleFindTrip = async () => {
+    try{
+      const res = await fetch("/api/ride/get-fare", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          pickup, destination
+        })
+      });
+  
+      const data = await res.json();
+      console.log(data);
+      setFare(data);
+      if(data.success === false){
+        console.log(data.message);
+        return;
+      }
+    }catch(error){
+      console.log(error);
+    }
+
     setVehiclePanel(true);
     setPanelOpen(false);
   }
@@ -154,8 +187,8 @@ export default function Home() {
           <h4 className='text-2xl font-semibold'>Find a Trip</h4>
           <form onSubmit={handleSumbit} className="relative">
             <div className="line absolute h-16 w-1 top-[25%] left-4 bg-gray-700 rounded-full"></div>
-            <input type="text" id='pickup' className="bg-[#eee] px-8 py-2 text-base rounded-lg w-full mt-3 outline-none" placeholder='Add a pick-up location' onClick={() => setPanelOpen(true)} onChange={handlePickupChange} value={pickup} />
-            <input type="text" id='destination' className="bg-[#eee] px-8 py-2 text-base rounded-lg w-full mt-3 outline-none" placeholder='Enter your destination' onClick={() => setPanelOpen(true)} onChange={handleDestinationChange} value={destination} />
+            <input type="text" id='pickup' className="bg-[#eee] px-8 py-2 text-base rounded-lg w-full mt-3 outline-none" placeholder='Add a pick-up location' onClick={() => setPanelOpen(true)} onChange={handlePickupChange} value={pickup.name} />
+            <input type="text" id='destination' className="bg-[#eee] px-8 py-2 text-base rounded-lg w-full mt-3 outline-none" placeholder='Enter your destination' onClick={() => setPanelOpen(true)} onChange={handleDestinationChange} value={destination.name} />
           </form>
           <button onClick={handleFindTrip} disabled={pickup.length === 0 || destination.length === 0} className="bg-black text-white px-4 py-2 rounded-md w-full font-semibold my-4 disabled:bg-[#4b3a3a]">Find Trip</button>
         </div>
@@ -165,11 +198,11 @@ export default function Home() {
         </div>
 
         <div ref={vehiclePanelRef} className="fixed w-full z-10 bottom-0 px-3 py-10 bg-white translate-y-full">
-          <VehiclePanel setVehiclePanel={setVehiclePanel} setConfirmRidePanel={setConfirmRidePanel} />
+          <VehiclePanel setVehiclePanel={setVehiclePanel} setConfirmRidePanel={setConfirmRidePanel} fare={fare} setSelectedFare={setSelectedFare} setVechicleImg={setVechicleImg} />
         </div>
 
         <div ref={confirmRidePanelRef} className="fixed w-full z-10 bottom-0 px-3 py-10 bg-white translate-y-full">
-          <ConfirmRide setConfirmRidePanel={setConfirmRidePanel} setVehicleFound={setVehicleFound} />
+          <ConfirmRide setConfirmRidePanel={setConfirmRidePanel} setVehicleFound={setVehicleFound} pickup={pickup} destination={destination} selectedFare={selectedFare} vehicleImg={vehicleImg} />
         </div>
 
         <div ref={vechidleFoundlRef} className="fixed w-full z-10 bottom-0 px-3 py-10 bg-white translate-y-full">
