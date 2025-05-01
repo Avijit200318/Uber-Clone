@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import UberBlackLogo from '/images/uber logo.png';
 import { useGSAP } from "@gsap/react";
 import gsap from 'gsap';
@@ -10,7 +10,10 @@ import ConfirmRide from '../components/ConfirmRide';
 import LokingForDriver from '../components/LokingForDriver';
 import WaitingForDriver from '../components/WaitingForDriver';
 
+import { io } from "socket.io-client"
+import { useSelector } from 'react-redux';
 
+let newSocket;
 export default function Home() {
 
   const [pickup, setPickup] = useState({
@@ -37,12 +40,43 @@ export default function Home() {
   const [vehicleImg, setVechicleImg] = useState(null);
   const [vehicleType, setVehicleType] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [socket, setSocket] = useState(null);
   console.log(suggestion)
 
   const vehiclePanelRef = useRef(null);
   const confirmRidePanelRef = useRef(null);
   const vechidleFoundlRef = useRef(null);
   const waitingForDriverRef = useRef(null);
+
+  const {currentUser} = useSelector((state) => state.user);
+  console.log("currentUser: ",currentUser);
+
+  useEffect(() => {
+    newSocket = (io(import.meta.env.VITE_BASE_URL));
+
+    setSocket(newSocket);
+
+    newSocket.on('connect', () => {
+      console.log("Connected to socket server:", newSocket.id);
+    });
+
+    newSocket.on('disconnect', () => {
+      console.log("Disconnected from socket server");
+    });
+
+    return () => {
+      newSocket.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    if(socket && currentUser){
+      newSocket.emit("join", {
+        userId: currentUser._id,
+        userType: 'user'
+      })
+    }
+  }, [socket])
 
   const handleSumbit = (e) => {
     e.preventDefault();
@@ -63,7 +97,7 @@ export default function Home() {
 
   const fetchSuggestions = async (input) => {
     try {
-      if(input.length < 3) return;
+      if (input.length < 3) return;
       // since we don't want to send too short input
       const res = await fetch(`/api/maps/get-suggestion?input=${input}`, {
         headers: {
@@ -151,7 +185,7 @@ export default function Home() {
   }, [waitingForDriver]);
 
   const handleFindTrip = async () => {
-    try{
+    try {
       setLoading(true);
       const res = await fetch("/api/ride/get-fare", {
         method: 'POST',
@@ -162,16 +196,16 @@ export default function Home() {
           pickup, destination
         })
       });
-  
+
       const data = await res.json();
-      if(data.success === false){
+      if (data.success === false) {
         console.log(data.message);
         setLoading(false);
         return;
       }
       setFare(data);
       setLoading(false);
-    }catch(error){
+    } catch (error) {
       console.log(error);
       setLoading(false);
     }
@@ -181,7 +215,7 @@ export default function Home() {
   }
 
   const createRide = async () => {
-    try{
+    try {
       const res = await fetch("/api/ride/create", {
         method: 'POST',
         headers: {
@@ -195,12 +229,12 @@ export default function Home() {
       });
 
       const data = await res.json();
-      if(data.success === false){
+      if (data.success === false) {
         return;
         console.log(data.message);
       }
       console.log("created ride: ", data);
-    }catch(error){
+    } catch (error) {
       console.log(error);
     }
   }
@@ -220,9 +254,9 @@ export default function Home() {
             <input type="text" id='pickup' className="bg-[#eee] px-8 py-2 text-base rounded-lg w-full mt-3 outline-none" placeholder='Add a pick-up location' onClick={() => setPanelOpen(true)} onChange={handlePickupChange} value={pickup.name} />
             <input type="text" id='destination' className="bg-[#eee] px-8 py-2 text-base rounded-lg w-full mt-3 outline-none" placeholder='Enter your destination' onClick={() => setPanelOpen(true)} onChange={handleDestinationChange} value={destination.name} />
           </form>
-          <button onClick={handleFindTrip} disabled={pickup.length === 0 || destination.length === 0} className="bg-black text-white px-4 py-2 rounded-md w-full font-semibold my-4 disabled:bg-[#4b3a3a] relative h-14 overflow-hidden flex items-center justify-center">{loading? 
-          <div className="border-4 border-t-4 border-t-white border-gray-300 rounded-full h-8 w-8 animate-spin absolute"></div>
-         : 'Find Trip'}</button>
+          <button onClick={handleFindTrip} disabled={pickup.length === 0 || destination.length === 0} className="bg-black text-white px-4 py-2 rounded-md w-full font-semibold my-4 disabled:bg-[#4b3a3a] relative h-14 overflow-hidden flex items-center justify-center">{loading ?
+            <div className="border-4 border-t-4 border-t-white border-gray-300 rounded-full h-8 w-8 animate-spin absolute"></div>
+            : 'Find Trip'}</button>
         </div>
 
         <div ref={panelRef} className="bg-white h-0 overflow-hidden">
