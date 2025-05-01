@@ -1,8 +1,27 @@
 import express from "express";
 import { body } from "express-validator";
 // this package help us to validate data that is comming from the frontend. we have to write it after the /signup like route using [].
-import { signUp, login, getUserProfile, logOut } from "../controllers/user.controller.js";
-import { authUserMiddleware } from "../middlewares/auth.middleware.js";
+import { signUp, login, getUserProfile, logOut, userOrCaptainInfo } from "../controllers/user.controller.js";
+import { authCaptainMiddleware, authUserMiddleware } from "../middlewares/auth.middleware.js";
+import {query} from "express-validator";
+
+const authEitherMiddleware = async (req, res, next) => {
+    try {
+        await authCaptainMiddleware(req, res, (err) => {
+            if (!err) return next(); // If captain authentication is successful, proceed.
+
+            // If captain auth fails, try user auth.
+            authUserMiddleware(req, res, (err) => {
+                if (!err) return next(); // If user authentication is successful, proceed.
+
+                // If both fail, return Unauthorized error.
+                return next(errorHandler(401, "Unauthorized"));
+            });
+        });
+    } catch (error) {
+        return next(errorHandler(401, "Unauthorized"));
+    }
+};
 
 const router = express.Router();
 
@@ -23,5 +42,11 @@ router.post('/login', [
 
 router.get("/profile", authUserMiddleware, getUserProfile);
 router.get("/logout", authUserMiddleware, logOut);
+
+router.get("/userInfo",
+    query('userId').isString().isLength({min: 5}),
+    authEitherMiddleware,
+    userOrCaptainInfo
+);
 
 export default router;

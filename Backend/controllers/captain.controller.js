@@ -29,7 +29,8 @@ export const signUpCaptain = async (req, res, next) => {
         color: vehicle.color,
         plate: vehicle.plate,
         capacity: vehicle.capacity,
-        vehicleType: vehicle.vehicleType
+        vehicleType: vehicle.vehicleType,
+        userType: 'captain',
     });
 
     const token = captain.generateAuthToken();

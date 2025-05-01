@@ -49,7 +49,6 @@ export default function Home() {
   const waitingForDriverRef = useRef(null);
 
   const {currentUser} = useSelector((state) => state.user);
-  console.log("currentUser: ",currentUser);
 
   useEffect(() => {
     newSocket = (io(import.meta.env.VITE_BASE_URL));

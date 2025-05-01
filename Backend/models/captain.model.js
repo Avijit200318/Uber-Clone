@@ -64,6 +64,10 @@ const captainSchema = new mongoose.Schema({
                 type: Number,
             },
         }
+    },
+    userType: {
+        type: String,
+        default: "captain",
     }
 });
 

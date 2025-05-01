@@ -5,6 +5,7 @@ import { validationResult } from "express-validator";
 
 import blackListTokenModel from "../models/blocklistToken.model.js";
 import { errorHandler } from "../middlewares/error.js";
+import captainModel from "../models/captain.model.js";
 
 
 export const signUp = async (req, res, next) => {
@@ -27,7 +28,8 @@ export const signUp = async (req, res, next) => {
         firstName: fullName.firstName,
         lastName: fullName.lastName,
         email,
-        password: hashPassword
+        password: hashPassword,
+        userType: 'user',
     });
 
     const token = user.generateAuthToken();
@@ -79,3 +81,28 @@ export const logOut = async (req, res, next) => {
 
     return res.status(200).json({message: "Logged Out Successfully"});
 };
+
+export const userOrCaptainInfo = async (req, res, next) => {
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+        return next(errorHandler(400, errors.array()));
+    }
+    
+    const {userId} = req.query;
+    
+    try{
+        let user = await userModel.findById(userId);
+        if(!user){
+            console.log("user is not normal user");
+            user = await captainModel.findById(userId);
+            if(!user){
+                console.log("not captain and user");
+                return next(errorHandler(404, "Invalid User Id"));
+            }
+        }
+
+        res.status(200).json(user);
+    }catch(error){
+        next(error);
+    }
+}
