@@ -4,7 +4,6 @@ import {useSelector} from "react-redux";
 export default function CaptainDetails() {
 
   const {currentCaptain} = useSelector((state)=> state.captain);
-  console.log("currentCaptain: ", currentCaptain);
 
   return (
     <div>

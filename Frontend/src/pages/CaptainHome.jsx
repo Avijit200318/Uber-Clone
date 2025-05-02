@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom';
 import uberLogo from "../../public/images/uber logo.png";
 import CaptainDetails from '../components/CaptainDetails';
@@ -7,13 +7,46 @@ import { useGSAP } from "@gsap/react";
 import gsap from 'gsap';
 import CaptainConfirmRidePopup from '../components/CaptainConfirmRidePopup';
 
+import {io} from "socket.io-client";
+import { useSelector } from 'react-redux';
+
+let newSocket;
+
 export default function CaptainHome() {
 
   const [ridePopupPanel, setRidePopupPanel] = useState(true);
   const [confirmRidePopup, setConfirmRidePopup] = useState(false);
+  const [socket, setSocket] = useState(null);
 
   const ridePopupPanelRef = useRef(null);
   const confirmRidePopupRef = useRef(null);
+  const {currentCaptain} = useSelector((state) => state.captain);
+
+  useEffect(() => {
+    newSocket = (io(import.meta.env.VITE_BASE_URL));
+    setSocket(newSocket);
+
+    newSocket.on('connect', () => {
+      console.log("Connected to socket server:", newSocket.id);
+    });
+
+    newSocket.on('disconnect', () => {
+      console.log("Disconnected from socket server");
+    });
+
+    return () => {
+      newSocket.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    if(socket && currentCaptain){
+      newSocket.emit("join", {
+        userId: currentCaptain._id,
+        userType: 'captain'
+      })
+    }
+  }, [socket]);
 
   useGSAP(() => {
     if (ridePopupPanel) {

@@ -93,10 +93,8 @@ export const userOrCaptainInfo = async (req, res, next) => {
     try{
         let user = await userModel.findById(userId);
         if(!user){
-            console.log("user is not normal user");
             user = await captainModel.findById(userId);
             if(!user){
-                console.log("not captain and user");
                 return next(errorHandler(404, "Invalid User Id"));
             }
         }

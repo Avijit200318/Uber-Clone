@@ -17,7 +17,7 @@ export default function Start() {
     if (token) {
       const decoded = jwtDecode(token);
       setUser(decoded);
-      console.log("decoded: ", decoded);
+      // console.log("decoded: ", decoded);
     }
   }, []);
 
