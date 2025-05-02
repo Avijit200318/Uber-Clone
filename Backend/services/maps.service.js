@@ -1,5 +1,6 @@
 import axios from "axios";
 import { errorHandler } from "../middlewares/error.js";
+import captainModel from "../models/captain.model.js";
 
 export const getAddressCordinate = async (address) => {
     const query = `${address}, Kolkata, India`;
@@ -71,4 +72,17 @@ export const getAutoCompleteSuggestion = async (input) => {
     } catch (error) {
         throw new Error(`Error fetching autocomplete suggestions: ${error.message}`);
     }
+};
+
+export const getCaptainsInTheRadius = async (ltd, lng, radius) => {
+    // radius in KM
+    const captains = await captainModel.find({
+        location: {
+            $geoWithin: {
+                $centerSphere: [[ltd, lng], radius/3963.2]
+            }
+        }
+    });
+
+    return captains;
 }

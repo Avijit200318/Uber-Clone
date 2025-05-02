@@ -223,7 +223,11 @@ export default function Home() {
         body: JSON.stringify({
           pickup,
           destination,
-          vehicleType
+          vehicleType,
+          pickupLocation: {
+            ltd: pickup.ltd,
+            lng: pickup.lng
+          }
         })
       });
 

@@ -48,6 +48,27 @@ export default function CaptainHome() {
     }
   }, [socket]);
 
+  useEffect(() => {
+    const updateLocation = () => {
+      if(!socket || !currentCaptain) return;
+      if(navigator.geolocation){
+        navigator.geolocation.getCurrentPosition((position) => {
+          socket.emit('update-location-captain', {
+            userId: currentCaptain._id,
+            location: {
+              ltd: position.coords.latitude,
+              lng: position.coords.longitude
+            }
+          })
+        })
+      }
+    }
+
+    const locationInterval = setInterval(updateLocation, 60000);
+    updateLocation();
+    return () => clearInterval(locationInterval);
+  }, [socket]);
+
   useGSAP(() => {
     if (ridePopupPanel) {
       gsap.to(ridePopupPanelRef.current, {
