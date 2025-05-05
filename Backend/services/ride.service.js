@@ -43,15 +43,15 @@ export const getFare = async (pickup, destination) => {
 };
 
 
-export const createRide = async ({ user, pickup, destination, vehicleType, pickupLocation }) => {
-    if (!user || !pickup || !destination || !vehicleType || !pickupLocation) {
+export const createRide = async ({ user, pickup, destination, vehicleType, pickupLocation, distance, duration }) => {
+    if (!user || !pickup || !destination || !vehicleType || !pickupLocation || !distance || !duration) {
         return errorHandler(400, "All fields are required");
     }
 
     const fare = await getFare(pickup, destination);
 
     const ride = rideModel.create({
-        user, pickup:pickup.name, destination: destination.name, fare: fare[vehicleType], otp: getOtp(6), pickupLocation
+        user, pickup:pickup.name, destination: destination.name, fare: fare[vehicleType], otp: getOtp(6), pickupLocation, distance, duration
     });
 
     return ride;

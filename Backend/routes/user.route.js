@@ -4,6 +4,7 @@ import { body } from "express-validator";
 import { signUp, login, getUserProfile, logOut, userOrCaptainInfo } from "../controllers/user.controller.js";
 import { authCaptainMiddleware, authUserMiddleware } from "../middlewares/auth.middleware.js";
 import {query} from "express-validator";
+import { errorHandler } from "../middlewares/error.js";
 
 const authEitherMiddleware = async (req, res, next) => {
     try {

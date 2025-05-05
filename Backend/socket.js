@@ -52,9 +52,11 @@ export const initializeSocket = (server) => {
     });
 }
 
-export const sendMessageToSocketId = (socketId, message) => {
+export const sendMessageToSocketId = (socketId, messageObject) => {
+    console.log(`sending message to ${socketId}`);
+
     if(io){
-        io.to(socketId).emit('message', message);
+        io.to(socketId).emit(messageObject.event, messageObject.data);
     }else{
         console.log('Socket.io not initialize.');
     }

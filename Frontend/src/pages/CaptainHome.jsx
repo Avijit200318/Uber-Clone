@@ -7,20 +7,21 @@ import { useGSAP } from "@gsap/react";
 import gsap from 'gsap';
 import CaptainConfirmRidePopup from '../components/CaptainConfirmRidePopup';
 
-import {io} from "socket.io-client";
+import { io } from "socket.io-client";
 import { useSelector } from 'react-redux';
 
 let newSocket;
 
 export default function CaptainHome() {
 
-  const [ridePopupPanel, setRidePopupPanel] = useState(true);
+  const [ridePopupPanel, setRidePopupPanel] = useState(false);
   const [confirmRidePopup, setConfirmRidePopup] = useState(false);
   const [socket, setSocket] = useState(null);
 
   const ridePopupPanelRef = useRef(null);
   const confirmRidePopupRef = useRef(null);
-  const {currentCaptain} = useSelector((state) => state.captain);
+  const { currentCaptain } = useSelector((state) => state.captain);
+  const [ride, setRide] = useState(null);
 
   useEffect(() => {
     newSocket = (io(import.meta.env.VITE_BASE_URL));
@@ -40,7 +41,7 @@ export default function CaptainHome() {
   }, []);
 
   useEffect(() => {
-    if(socket && currentCaptain){
+    if (socket && currentCaptain) {
       newSocket.emit("join", {
         userId: currentCaptain._id,
         userType: 'captain'
@@ -50,8 +51,8 @@ export default function CaptainHome() {
 
   useEffect(() => {
     const updateLocation = () => {
-      if(!socket || !currentCaptain) return;
-      if(navigator.geolocation){
+      if (!socket || !currentCaptain) return;
+      if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
           socket.emit('update-location-captain', {
             userId: currentCaptain._id,
@@ -67,6 +68,18 @@ export default function CaptainHome() {
     const locationInterval = setInterval(updateLocation, 60000);
     updateLocation();
     return () => clearInterval(locationInterval);
+  }, [socket]);
+
+  useEffect(() => {
+    const rideMessage = () => {
+      if(!socket) return;
+      newSocket.on('new-ride', (data) => {
+        console.log("data: ", data);
+        setRide(data);
+        setRidePopupPanel(true);
+      })
+    }
+    rideMessage();
   }, [socket]);
 
   useGSAP(() => {
@@ -109,9 +122,9 @@ export default function CaptainHome() {
         <CaptainDetails />
       </div>
       <div ref={ridePopupPanelRef} className="fixed w-full z-10 bottom-0 px-3 py-10 bg-white translate-y-full">
-        <Ridepopup setRidePopupPanel={setRidePopupPanel} setConfirmRidePopup={setConfirmRidePopup} />
+        <Ridepopup ride={ride} setRidePopupPanel={setRidePopupPanel} setConfirmRidePopup={setConfirmRidePopup} />
       </div>
-      
+
       <div ref={confirmRidePopupRef} className=" h-screen fixed w-full z-10 bottom-0 px-3 py-10 bg-white translate-y-full">
         <CaptainConfirmRidePopup setConfirmRidePopup={setConfirmRidePopup} setRidePopupPanel={setRidePopupPanel} />
       </div>
