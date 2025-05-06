@@ -17,7 +17,7 @@ let newSocket;
 export default function Home() {
 
   const [pickup, setPickup] = useState({
-    name: '',
+    name: 'Current Location',
     ltd: '',
     lng: ''
   });
@@ -41,6 +41,7 @@ export default function Home() {
   const [vehicleType, setVehicleType] = useState(null);
   const [loading, setLoading] = useState(false);
   const [socket, setSocket] = useState(null);
+  const [ride, setRide] = useState(null);
   console.log(suggestion)
 
   const vehiclePanelRef = useRef(null);
@@ -48,7 +49,7 @@ export default function Home() {
   const vechidleFoundlRef = useRef(null);
   const waitingForDriverRef = useRef(null);
 
-  const {currentUser} = useSelector((state) => state.user);
+  const { currentUser } = useSelector((state) => state.user);
 
   useEffect(() => {
     newSocket = (io(import.meta.env.VITE_BASE_URL));
@@ -69,13 +70,23 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if(socket && currentUser){
+    if (socket && currentUser) {
       newSocket.emit("join", {
         userId: currentUser._id,
         userType: 'user'
       })
     }
   }, [socket])
+
+  useEffect(() => {
+    if (socket) {
+      newSocket.on('ride-confirmed', (data) => {
+        setWaitingForDriver(true);
+        console.log(data);
+        setRide(data);
+      })
+    }
+  }, [socket]);
 
   const handleSumbit = (e) => {
     e.preventDefault();
@@ -242,6 +253,22 @@ export default function Home() {
     }
   }
 
+  useEffect(() => {
+    const updateLocation = () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          console.log("user current location is added");
+          setPickup({
+            name: "Current Location",
+            ltd: position.coords.latitude,
+            lng: position.coords.longitude
+          })
+        })
+      }
+    }
+    updateLocation();
+  }, []);
+
   return (
     <div className='h-screen relative'>
       <img src={UberBlackLogo} alt="" className="w-16 mb-5 absolute top-5 left-5" />
@@ -254,7 +281,7 @@ export default function Home() {
           <h4 className='text-2xl font-semibold'>Find a Trip</h4>
           <form onSubmit={handleSumbit} className="relative">
             <div className="line absolute h-16 w-1 top-[25%] left-4 bg-gray-700 rounded-full"></div>
-            <input type="text" id='pickup' className="bg-[#eee] px-8 py-2 text-base rounded-lg w-full mt-3 outline-none" placeholder='Add a pick-up location' onClick={() => setPanelOpen(true)} onChange={handlePickupChange} value={pickup.name} />
+            <input type="text" id='pickup' className="bg-[#eee] px-8 py-2 text-base rounded-lg w-full outline-none" placeholder='Add a pick-up location' onClick={() => setPanelOpen(true)} onChange={handlePickupChange} value={pickup.name} />
             <input type="text" id='destination' className="bg-[#eee] px-8 py-2 text-base rounded-lg w-full mt-3 outline-none" placeholder='Enter your destination' onClick={() => setPanelOpen(true)} onChange={handleDestinationChange} value={destination.name} />
           </form>
           <button onClick={handleFindTrip} disabled={pickup.length === 0 || destination.length === 0} className="bg-black text-white px-4 py-2 rounded-md w-full font-semibold my-4 disabled:bg-[#4b3a3a] relative h-14 overflow-hidden flex items-center justify-center">{loading ?
@@ -279,7 +306,7 @@ export default function Home() {
         </div>
 
         <div ref={waitingForDriverRef} className="fixed w-full z-10 bottom-0 px-3 py-10 bg-white translate-y-full">
-          <WaitingForDriver setWaitingForDriver={setWaitingForDriver} />
+          <WaitingForDriver setWaitingForDriver={setWaitingForDriver} ride={ride} />
         </div>
       </div>
     </div>

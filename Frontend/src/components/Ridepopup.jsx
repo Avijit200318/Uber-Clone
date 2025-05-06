@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-export default function Ridepopup({setRidePopupPanel, setConfirmRidePopup,ride}) {
+export default function Ridepopup({setRidePopupPanel, setConfirmRidePopup,ride, confirmRide}) {
 
   return (
     <div>
@@ -11,7 +11,7 @@ export default function Ridepopup({setRidePopupPanel, setConfirmRidePopup,ride})
                     <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSAp3Z1hXfTVTKtbw3vE75-rtfr1ZCFcPSw4A&s" alt="" className="h-10 w-10 rounded-full object-cover" />
                     <h2 className='text-lg font-medium'>{ride?.user.fullName.firstName + " " + ride?.user.fullName.lastName}</h2>
                 </div>
-                <h5 className='text-lg font-semibold'>{ride?.distance} KM</h5>
+                <h5 className='text-lg font-semibold'>{ride?.distance.toLocaleString('en-US')} KM</h5>
             </div>
             <div className="flex flex-col justify-between items-center gap-2">
               <div className="w-full mt-5">
@@ -37,7 +37,7 @@ export default function Ridepopup({setRidePopupPanel, setConfirmRidePopup,ride})
                   </div>
                 </div>
               </div>
-              <button onClick={()=> setConfirmRidePopup(true)} className="w-full mt-5 mt- bg-green-600 text-white font-semibold px-2 py-3 rounded-lg text-lg">Accept</button>
+              <button onClick={()=> {setConfirmRidePopup(true); confirmRide()}} className="w-full mt-5 mt- bg-green-600 text-white font-semibold px-2 py-3 rounded-lg text-lg">Accept</button>
 
               <button onClick={()=>setRidePopupPanel(false)} className="w-full mt-1 mt- bg-gray-300  text-gray-700 font-semibold px-2 py-3 rounded-lg text-lg">Ignore</button>
             </div>

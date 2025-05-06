@@ -106,6 +106,33 @@ export default function CaptainHome() {
     }
   }, [confirmRidePopup]);
 
+  const confirmRide = async () => {
+    if(!ride || !currentCaptain) {
+      console.log("ride or captain is missing");
+      return;
+    }
+    try{
+      const res = await fetch("/api/ride/confirm", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({rideId: ride._id, captainId: currentCaptain._id}),
+      });
+  
+      const data = await res.json();
+      if(data.success === false){
+        console.log(data.message);
+        return;
+      }
+  
+      setRidePopupPanel(false);
+      setConfirmRidePopup(true);
+    }catch(error){
+      console.log(error.message);
+    }
+  }
+
   return (
     <div className='h-screen'>
       <div className="fixed p-3 top-0 w-full flex items-center justify-between">
@@ -122,11 +149,11 @@ export default function CaptainHome() {
         <CaptainDetails />
       </div>
       <div ref={ridePopupPanelRef} className="fixed w-full z-10 bottom-0 px-3 py-10 bg-white translate-y-full">
-        <Ridepopup ride={ride} setRidePopupPanel={setRidePopupPanel} setConfirmRidePopup={setConfirmRidePopup} />
+        <Ridepopup ride={ride} setRidePopupPanel={setRidePopupPanel} setConfirmRidePopup={setConfirmRidePopup} confirmRide={confirmRide} />
       </div>
 
       <div ref={confirmRidePopupRef} className=" h-screen fixed w-full z-10 bottom-0 px-3 py-10 bg-white translate-y-full">
-        <CaptainConfirmRidePopup setConfirmRidePopup={setConfirmRidePopup} setRidePopupPanel={setRidePopupPanel} />
+        <CaptainConfirmRidePopup setConfirmRidePopup={setConfirmRidePopup} setRidePopupPanel={setRidePopupPanel} ride={ride} />
       </div>
     </div>
   )
