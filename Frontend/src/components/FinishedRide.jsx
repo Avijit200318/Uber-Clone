@@ -25,7 +25,7 @@ export default function FinishedRide({ setFinishedRidePanel, ride }) {
                     <div className="flex items-center gap-5 p-2 border-b-2">
                         <i className="ri-map-pin-2-fill text-xl"></i>
                         <div className="">
-                            <h3 className='font-semibold text-lg'>{ride?.destination}</h3>
+                            <h3 className='font-semibold text-lg line-clamp-2'>{ride?.destination}</h3>
                             <p className='text-gray-600 text-sm -mt-1'>Lorem ipsum dolor sit amet.</p>
                         </div>
                     </div>

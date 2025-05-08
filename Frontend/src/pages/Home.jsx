@@ -11,7 +11,7 @@ import LokingForDriver from '../components/LokingForDriver';
 import WaitingForDriver from '../components/WaitingForDriver';
 import {useNavigate} from "react-router-dom";
 
-import { io } from "socket.io-client"
+import { useSocket } from '../components/SocketConnect';
 import { useSelector } from 'react-redux';
 
 let newSocket;
@@ -50,26 +50,13 @@ export default function Home() {
   const vechidleFoundlRef = useRef(null);
   const waitingForDriverRef = useRef(null);
   const navigate = useNavigate();
-
   const { currentUser } = useSelector((state) => state.user);
 
+  newSocket = useSocket();
+
   useEffect(() => {
-    newSocket = (io(import.meta.env.VITE_BASE_URL));
-
     setSocket(newSocket);
-
-    newSocket.on('connect', () => {
-      console.log("Connected to socket server:", newSocket.id);
-    });
-
-    newSocket.on('disconnect', () => {
-      console.log("Disconnected from socket server");
-    });
-
-    return () => {
-      newSocket.disconnect();
-    };
-  }, []);
+  }, [newSocket]);
 
   useEffect(() => {
     if (socket && currentUser) {

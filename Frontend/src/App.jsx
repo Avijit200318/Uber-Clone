@@ -12,27 +12,30 @@ import CaptainHome from './pages/CaptainHome';
 import CaptainPrivateRoute from './components/CaptainPrivateRoute';
 import Riding from './pages/Riding';
 import CaptainRiding from './pages/CaptainRiding';
+import { SocketProvider } from './components/SocketConnect';
 
 export default function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path='/' element={<Start />} />
-        <Route path='/login' element={<UserLogin />} />
-        <Route path='/signup' element={<UserSignUp />} />
-        <Route path='/captain-login' element={<CaptainLogin />} />
-        <Route path='/captain-signup' element={<CaptainSignUp />} />
-        <Route element={<PrivateRoute />}>
-          <Route path='/home' element={<Home />} />
-          <Route path='/user/logout' element={<UserLogout />} />
-          <Route path='/riding' element={<Riding />} />
-        </Route>
-        
-        <Route element={<CaptainPrivateRoute />}>
-          <Route path='/captain-home' element={<CaptainHome />} />
-          <Route path='/captain-riding' element={<CaptainRiding />} />
-        </Route>
-      </Routes>
+      <SocketProvider>
+        <Routes>
+          <Route path='/' element={<Start />} />
+          <Route path='/login' element={<UserLogin />} />
+          <Route path='/signup' element={<UserSignUp />} />
+          <Route path='/captain-login' element={<CaptainLogin />} />
+          <Route path='/captain-signup' element={<CaptainSignUp />} />
+          <Route element={<PrivateRoute />}>
+            <Route path='/home' element={<Home />} />
+            <Route path='/user/logout' element={<UserLogout />} />
+            <Route path='/riding' element={<Riding />} />
+          </Route>
+
+          <Route element={<CaptainPrivateRoute />}>
+            <Route path='/captain-home' element={<CaptainHome />} />
+            <Route path='/captain-riding' element={<CaptainRiding />} />
+          </Route>
+        </Routes>
+      </SocketProvider>
     </BrowserRouter>
   )
 }

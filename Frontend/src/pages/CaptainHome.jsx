@@ -7,8 +7,8 @@ import { useGSAP } from "@gsap/react";
 import gsap from 'gsap';
 import CaptainConfirmRidePopup from '../components/CaptainConfirmRidePopup';
 
-import { io } from "socket.io-client";
 import { useSelector } from 'react-redux';
+import { useSocket } from '../components/SocketConnect';
 
 let newSocket;
 
@@ -22,23 +22,11 @@ export default function CaptainHome() {
   const confirmRidePopupRef = useRef(null);
   const { currentCaptain } = useSelector((state) => state.captain);
   const [ride, setRide] = useState(null);
+  newSocket = useSocket();
 
   useEffect(() => {
-    newSocket = (io(import.meta.env.VITE_BASE_URL));
     setSocket(newSocket);
-
-    newSocket.on('connect', () => {
-      console.log("Connected to socket server:", newSocket.id);
-    });
-
-    newSocket.on('disconnect', () => {
-      console.log("Disconnected from socket server");
-    });
-
-    return () => {
-      newSocket.disconnect();
-    };
-  }, []);
+  }, [newSocket]);
 
   useEffect(() => {
     if (socket && currentCaptain) {
@@ -72,7 +60,7 @@ export default function CaptainHome() {
 
   useEffect(() => {
     const rideMessage = () => {
-      if(!socket) return;
+      if (!socket) return;
       newSocket.on('new-ride', (data) => {
         console.log("data: ", data);
         setRide(data);
@@ -107,28 +95,28 @@ export default function CaptainHome() {
   }, [confirmRidePopup]);
 
   const confirmRide = async () => {
-    if(!ride || !currentCaptain) {
+    if (!ride || !currentCaptain) {
       console.log("ride or captain is missing");
       return;
     }
-    try{
+    try {
       const res = await fetch("/api/ride/confirm", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({rideId: ride._id, captainId: currentCaptain._id}),
+        body: JSON.stringify({ rideId: ride._id, captainId: currentCaptain._id }),
       });
-  
+
       const data = await res.json();
-      if(data.success === false){
+      if (data.success === false) {
         console.log(data.message);
         return;
       }
-  
+
       setRidePopupPanel(false);
       setConfirmRidePopup(true);
-    }catch(error){
+    } catch (error) {
       console.log(error.message);
     }
   }
