@@ -1,4 +1,4 @@
-import { createRide, getConfirmRide, rideStartedService } from "../services/ride.service.js";
+import { createRide, endRideService, getConfirmRide, rideStartedService } from "../services/ride.service.js";
 import { validationResult } from "express-validator";
 import { getDistanceTimeService } from "../services/maps.service.js";
 import { getFare } from "../services/ride.service.js";
@@ -85,5 +85,27 @@ export const startRide = async (req, res, next) => {
         return res.status(200).json(ride);
     }catch(error){
         next(error.message);
+    }
+}
+
+export const endRide = async (req, res, next) => {
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+        return res.status(400).json({errors: errors.array()});
+    }
+
+    const {rideId} = req.body;
+
+    try{
+        const ride = await endRideService(rideId, req.captain);
+
+        sendMessageToSocketId(ride.user.socketId, {
+            event: 'ride-ended',
+            data: ride
+        })
+
+        return res.status(200).json(ride);
+    }catch(error){
+        next(error);
     }
 }
