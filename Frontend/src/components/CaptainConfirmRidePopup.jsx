@@ -1,15 +1,29 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function CaptainConfirmRidePopup({ setConfirmRidePopup, setRidePopupPanel, ride }) {
 
     const [otp, setOtp] = useState('');
+    const navigate = useNavigate();
 
     const handelSubmit = async (e) => {
         e.preventDefault();
-        try{
+        console.log("otp is submitted ", ride._id, "and ", ride.otp);
+        try {
+            const res = await fetch(`/api/ride/start-ride?rideId=${ride._id}&otp=${otp}`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                }
+            });
 
-        }catch(error){
+            const data = await res.json();
+            if(!data || data.success === false){
+                console.log(data.message);
+                return;
+            }
+            console.log("data: ", data);
+            navigate('/captain-riding', {state: {ride: data}});
+        } catch (error) {
             console.log(error);
         }
     }
@@ -52,10 +66,10 @@ export default function CaptainConfirmRidePopup({ setConfirmRidePopup, setRidePo
 
                 <div className="w-full flex flex-col gap-2">
                     <form onSubmit={handelSubmit} className="">
-                        <input onChange={(e)=>setOtp(e.target.value)} type="text" id='otp' className="bg-[#eee] px-8 py-3 text-base rounded-lg w-full mt-3 outline-none" placeholder='Enter OTP' defaultValue={otp} />
-                        <Link to='/captain-riding' className=" flex justify-center  items-center w-full mt-5 mt- bg-green-600 text-white font-semibold px-2 py-3 rounded-lg text-lg">Confirm</Link>
+                        <input onChange={(e) => setOtp(e.target.value)} type="text" id='otp' className="bg-[#eee] px-8 py-3 text-base rounded-lg w-full mt-3 outline-none" placeholder='Enter OTP' defaultValue={otp} />
+                        <button className=" flex justify-center  items-center w-full mt-5 mt- bg-green-600 text-white font-semibold px-2 py-3 rounded-lg text-lg">Confirm</button>
 
-                        <button onClick={() => { setConfirmRidePopup(false); setRidePopupPanel(false) }} className="w-full mt-1 mt- bg-red-500  text-white font-semibold px-2 py-3 rounded-lg text-lg">Cancel</button>
+                        <button type='button' onClick={() => { setConfirmRidePopup(false); setRidePopupPanel(false) }} className="w-full mt-1 mt- bg-red-500  text-white font-semibold px-2 py-3 rounded-lg text-lg">Cancel</button>
                     </form>
                 </div>
             </div>

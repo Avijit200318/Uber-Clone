@@ -9,6 +9,7 @@ import VehiclePanel from '../components/VehiclePanel';
 import ConfirmRide from '../components/ConfirmRide';
 import LokingForDriver from '../components/LokingForDriver';
 import WaitingForDriver from '../components/WaitingForDriver';
+import {useNavigate} from "react-router-dom";
 
 import { io } from "socket.io-client"
 import { useSelector } from 'react-redux';
@@ -48,6 +49,7 @@ export default function Home() {
   const confirmRidePanelRef = useRef(null);
   const vechidleFoundlRef = useRef(null);
   const waitingForDriverRef = useRef(null);
+  const navigate = useNavigate();
 
   const { currentUser } = useSelector((state) => state.user);
 
@@ -84,6 +86,15 @@ export default function Home() {
         setWaitingForDriver(true);
         console.log(data);
         setRide(data);
+      })
+    }
+  }, [socket]);
+
+  useEffect(() => {
+    if(socket){
+      newSocket.on('ride-started', (ride) => {
+        setWaitingForDriver(false);
+        navigate('/riding', {state: {ride: ride}});
       })
     }
   }, [socket]);

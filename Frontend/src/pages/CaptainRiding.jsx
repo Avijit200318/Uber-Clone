@@ -4,11 +4,14 @@ import uberLogo from "../../public/images/uber logo.png";
 import { useGSAP } from "@gsap/react";
 import gsap from 'gsap';
 import FinishedRide from '../components/FinishedRide';
+import { useLocation } from 'react-router-dom';
 
 export default function CaptainRiding() {
 
     const [finishedRidePanel, setFinishedRidePanel] = useState(false);
     const finishedRidePanelRef = useRef(null);
+    const location = useLocation();
+    const ride = location.state?.ride;
 
     useGSAP(() => {
         if (finishedRidePanel) {
@@ -37,12 +40,12 @@ export default function CaptainRiding() {
                 <h5 className="p-1 text-center w-full absolute top-0">
                     <i className="ri-arrow-up-wide-line text-2xl text-gray-500"></i>
                 </h5>
-                <h4 className="text-xl font-semibold">4 KM away</h4>
+                <h4 className="text-xl font-semibold">{ride?.distance}KM away</h4>
                 <button className="bg-green-600 text-white font-semibold p-3 px-6 rounded-lg">Complete Ride</button>
             </div>
 
             <div ref={finishedRidePanelRef} className=" fixed w-full z-10 bottom-0 px-3 py-10 bg-white translate-y-full">
-                <FinishedRide setFinishedRidePanel={setFinishedRidePanel} />
+                <FinishedRide setFinishedRidePanel={setFinishedRidePanel} ride={ride} />
             </div>
         </div>
     )

@@ -2,6 +2,7 @@ import rideModel from "../models/ride.model.js";
 import { getDistanceTimeService, getAddressCordinate } from "./maps.service.js";
 import { errorHandler } from "../middlewares/error.js";
 import crypto from "crypto";
+import { sendMessageToSocketId } from "../socket.js";
 
 
 export const getFare = async (pickup, destination) => {
@@ -80,6 +81,41 @@ export const getConfirmRide = async (rideId, captainId) => {
     if (!ride) {
         throw new Error('Ride not found');
     }
+
+    return ride;
+};
+
+export const rideStartedService = async (rideId, otp) => {
+    if(!rideId || !otp){
+        throw new Error('Ride id and Otp are required');
+    }
+
+    const ride = await rideModel.findOne({
+        _id: rideId
+    }).populate('user').populate('captain').select('+otp');
+
+    if(!ride){
+        throw new Error('Ride not found');
+    }
+
+    if(ride.status !== 'accepted'){
+        return errorHandler(500, 'Ride not accepted');
+    }
+
+    if(ride.otp != otp){
+        return errorHandler(500, 'Invalid Otp');
+    }
+
+    await rideModel.findOneAndUpdate({
+        _id: rideId
+    }, {
+        status: 'ongoing'
+    })
+
+    sendMessageToSocketId(ride.user.socketId, {
+        event: 'ride-started',
+        data: ride
+    })
 
     return ride;
 }

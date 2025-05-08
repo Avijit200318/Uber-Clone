@@ -1,10 +1,11 @@
-import { createRide, getConfirmRide } from "../services/ride.service.js";
+import { createRide, getConfirmRide, rideStartedService } from "../services/ride.service.js";
 import { validationResult } from "express-validator";
 import { getDistanceTimeService } from "../services/maps.service.js";
 import { getFare } from "../services/ride.service.js";
 import {getCaptainsInTheRadius} from "../services/maps.service.js";
 import {sendMessageToSocketId} from "../socket.js";
 import rideModel from "../models/ride.model.js";
+import { errorHandler } from "../middlewares/error.js";
 
 export const createRideController = async (req, res, next) => {
     const errors = validationResult(req);
@@ -67,5 +68,22 @@ export const confirmRide = async (req, res, next) => {
         return res.status(200).json(ride);
     }catch(error){
         next(error);
+    }
+}
+
+export const startRide = async (req, res, next) => {
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+        return res.status(400).json({error: errors.array()});
+    }
+
+    const {rideId, otp} = req.query;
+
+    try{
+        const ride = await rideStartedService(rideId, otp);
+
+        return res.status(200).json(ride);
+    }catch(error){
+        next(error.message);
     }
 }
