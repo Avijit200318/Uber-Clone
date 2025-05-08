@@ -1,11 +1,23 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import uberCar from "/images/uber car.webp";
 import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
+import { useSocket } from '../components/SocketConnect';
+import { useNavigate } from 'react-router-dom';
 
 export default function Riding() {
     const location = useLocation();
     const ride = location.state?.ride;
+    let newSocket = useSocket();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if(newSocket){
+            newSocket.on("ride-ended", () => {
+                navigate("/home");
+            })
+        }
+    }, [newSocket]);
 
     return (
         <div className='h-screen'>

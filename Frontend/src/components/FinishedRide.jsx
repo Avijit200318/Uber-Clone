@@ -1,7 +1,31 @@
 import React from 'react'
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export default function FinishedRide({ setFinishedRidePanel, ride }) {
+    const navigate = useNavigate();
+
+    const endRide = async () => {
+        if(!ride) return;
+        try{
+            const res = await fetch("/api/ride/end-ride", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({rideId: ride._id})
+            });
+
+            const data = await res.json();
+            if(!data || data.success === false){
+                console.log(data);
+                return;
+            }
+            navigate("/captain-home");
+        }catch(error){
+            console.log(error);
+        }
+    }
+
     return (
         <div className='py-8'>
             <h5 onClick={() => setFinishedRidePanel(false)} className="p-1 text-center absolute top-0 w-[93%] cursor-pointer"><i className="ri-arrow-down-wide-fill text-2xl text-gray-500"></i></h5>
@@ -39,7 +63,7 @@ export default function FinishedRide({ setFinishedRidePanel, ride }) {
                 </div>
 
                 <div className="w-full flex flex-col gap-2">
-                    <Link to='/captain-home' className=" flex justify-center  items-center w-full mt-5 mt- bg-green-600 text-white font-semibold px-2 py-3 rounded-lg text-lg">Complete Ride</Link>
+                    <button onClick={endRide} className=" flex justify-center  items-center w-full mt-5 mt- bg-green-600 text-white font-semibold px-2 py-3 rounded-lg text-lg">Complete Ride</button>
                     <p className="text-red-700 mt-6 text-sm font-semibold line-clamp-2 text-center">Click the Finished button after payment completion</p>
                 </div>
             </div>
