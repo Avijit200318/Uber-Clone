@@ -9,6 +9,7 @@ import CaptainConfirmRidePopup from '../components/CaptainConfirmRidePopup';
 
 import { useSelector } from 'react-redux';
 import { useSocket } from '../components/SocketConnect';
+import LiveTracking from '../components/LiveTracking';
 
 let newSocket;
 
@@ -22,6 +23,11 @@ export default function CaptainHome() {
   const confirmRidePopupRef = useRef(null);
   const { currentCaptain } = useSelector((state) => state.captain);
   const [ride, setRide] = useState(null);
+  const [location, setLocation] = useState({
+    ltd: "",
+    lng: ""
+  });
+
   newSocket = useSocket();
 
   useEffect(() => {
@@ -42,6 +48,7 @@ export default function CaptainHome() {
       if (!socket || !currentCaptain) return;
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
+          setLocation({ ltd: position.coords.latitude + 0.0006312660467, lng: position.coords.longitude -  0.00579800000001});
           socket.emit('update-location-captain', {
             userId: currentCaptain._id,
             location: {
@@ -123,17 +130,24 @@ export default function CaptainHome() {
 
   return (
     <div className='h-screen'>
-      <div className="fixed p-3 top-0 w-full flex items-center justify-between">
+      <div className="fixed p-3 top-0 w-full flex items-center justify-between z-20">
         <img src={uberLogo} alt="" className="w-16" />
         <Link to='/home' className="h-10 w-10 bg-white flex items-center justify-center rounded-full">
           <i className=" text-lg ri-logout-box-r-line"></i>
         </Link>
       </div>
-      <div className="h-3/5">
-        <img src="https://s.wsj.net/public/resources/images/BN-XR453_201802_M_20180228165619.gif" alt="" className="h-full w-full object-cover" />
+      <div className={`h-[65%] relative ${location.ltd.length === 0? 'z-50' : 'z-10'}`}>
+        {location.ltd.length === 0 &&
+          <div className="w-full h-screen flex justify-center items-center bg-white">
+            <div className="border-8 border-t-8 border-t-gray-800 border-black rounded-full w-16 h-16 animate-spin"></div>
+          </div>
+        }
+        {location.ltd.length !== 0 &&
+          <LiveTracking location={location} />
+        }
       </div>
 
-      <div className="h-2/5 px-4 py-8">
+      <div className="h-[35%] px-4 py-8">
         <CaptainDetails />
       </div>
       <div ref={ridePopupPanelRef} className="fixed w-full z-10 bottom-0 px-3 py-10 bg-white translate-y-full">

@@ -278,7 +278,7 @@ export default function Home() {
         </div>
         }
         {pickup.ltd.length !== 0 &&
-        <LiveTracking pickup={pickup} /> 
+        <LiveTracking location={pickup} /> 
         }
       </div>
       <div className="h-screen flex flex-col justify-end absolute top-0 w-full z-20">

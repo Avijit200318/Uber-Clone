@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import uberCar from "/images/uber car.webp";
 import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { useSocket } from '../components/SocketConnect';
 import { useNavigate } from 'react-router-dom';
+import LiveTracking from '../components/LiveTracking';
 
 export default function Riding() {
     const location = useLocation();
@@ -11,31 +12,50 @@ export default function Riding() {
     let newSocket = useSocket();
     const navigate = useNavigate();
 
+    // user location
+    const [position, setPoisition] = useState({
+        ltd: "",
+        lng: ""
+    })
+
     useEffect(() => {
-        if(newSocket){
+        if (newSocket) {
             newSocket.on("ride-ended", () => {
                 navigate("/home");
             })
         }
     }, [newSocket]);
 
+    useEffect(() => {
+        navigator.geolocation.getCurrentPosition((position) => {
+            setPoisition({ ltd: position.coords.latitude, lng: position.coords.longitude });
+        })
+    }, []);
+
     return (
         <div className='h-screen'>
-            <Link to='/home' className="fixed right-2 top-2 h-10 w-10 bg-white flex items-center justify-center rounded-full">
-            <i className="text-lg ri-home-4-fill"></i>
+            <Link to='/home' className="fixed right-2 top-2 h-10 w-10 bg-white flex items-center justify-center rounded-full z-20">
+                <i className="text-lg ri-home-4-fill"></i>
             </Link>
-            <div className="h-1/2">
-                <img src="https://s.wsj.net/public/resources/images/BN-XR453_201802_M_20180228165619.gif" alt="" className="h-full w-full object-cover" />
+            <div className={`h-1/2 relative ${position.ltd.length === 0? 'z-50' : 'z-10'}`}>
+                {position.ltd.length === 0 &&
+                    <div className="w-full h-screen flex justify-center items-center bg-white">
+                        <div className="border-8 border-t-8 border-t-gray-800 border-black rounded-full w-16 h-16 animate-spin"></div>
+                    </div>
+                }
+                {position.ltd.length !== 0 &&
+                    <LiveTracking location={position} />
+                }
             </div>
 
             <div className="h-1/2 px-4 py-8">
                 <div className="flex items-center justify-between">
                     <div className="relative w-[30%]">
-                        <div className="w-14 h-14 rounded-full border-2 border-gray-300 overflow-hidden relative z-10">
+                        <div className="w-14 h-14 rounded-full border-2 border-gray-300 overflow-hidden relative z-20">
                             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCbU49DD_iYcjSUEXG-Oy7POjJzaMn1GYEZg&s" alt="" className="w-full h-full object-cover" />
                         </div>
-                        <div className="w-14 h-14 rounded-full border-2 border-gray-400 overflow-hidden absolute top-0 right-2">
-                            <img src={uberCar} alt="" className="w-full h-full object-contain" />
+                        <div className="w-14 h-14 rounded-full border-2 border-gray-400 overflow-hidden absolute top-0 right-2 z-10">
+                            <img src={uberCar} alt="" className="w-full h-full object-contain relative" />
                         </div>
                     </div>
                     <div className="text-right">
@@ -46,7 +66,7 @@ export default function Riding() {
                 </div>
                 <div className="flex flex-col justify-between items-center gap-2">
                     <div className="w-full mt-5">
-                    
+
                         <div className="flex items-center gap-5 p-2 border-b-2">
                             <i className="ri-map-pin-2-fill text-xl"></i>
                             <div className="">
