@@ -13,6 +13,7 @@ import {useNavigate} from "react-router-dom";
 
 import { useSocket } from '../components/SocketConnect';
 import { useSelector } from 'react-redux';
+import LiveTracking from '../components/LiveTracking';
 
 let newSocket;
 export default function Home() {
@@ -269,11 +270,18 @@ export default function Home() {
 
   return (
     <div className='h-screen relative'>
-      <img src={UberBlackLogo} alt="" className="w-16 mb-5 absolute top-5 left-5" />
-      <div className="h-screen w-screen">
-        <img src="https://s.wsj.net/public/resources/images/BN-XR453_201802_M_20180228165619.gif" alt="" className="h-full w-full object-cover" />
+      <img src={UberBlackLogo} alt="" className="w-16 mb-5 absolute top-5 left-5 z-20" />
+      <div className={`h-screen w-screen relative ${pickup.ltd.length === 0? 'z-50' : 'z-10'}`}>
+        {pickup.ltd.length === 0 && 
+          <div className="w-full h-screen flex justify-center items-center bg-white">
+          <div className="border-8 border-t-8 border-t-gray-800 border-black rounded-full w-16 h-16 animate-spin"></div>
+        </div>
+        }
+        {pickup.ltd.length !== 0 &&
+        <LiveTracking pickup={pickup} /> 
+        }
       </div>
-      <div className="h-screen flex flex-col justify-end absolute top-0 w-full">
+      <div className="h-screen flex flex-col justify-end absolute top-0 w-full z-20">
         <div className="h-[32%] p-5 bg-white relative">
           <h5 ref={showBtnRef} onClick={() => setPanelOpen(false)} className='absolute top-2 right-3 text-2xl cursor-pointer'><i className="ri-arrow-down-wide-fill"></i></h5>
           <h4 className='text-2xl font-semibold'>Find a Trip</h4>
