@@ -344,3 +344,242 @@ Example:
   "message": "Logout successfully"
 }
 ```
+
+
+# Ride API Endpoints
+
+---
+
+## Endpoint: `/ride/create`
+
+### Description
+This endpoint is used to create a new ride request. The user must provide pickup and destination locations along with the preferred vehicle type.
+
+### Method
+`POST`
+
+### Headers
+- `Authorization`: Bearer token (User, required)
+
+### Request Body
+```json
+{
+  "pickup": { "lat": 22.5726, "lng": 88.3639 },
+  "destination": { "lat": 22.5800, "lng": 88.3700 },
+  "vehicleType": "car",
+  "pickupLocation": { "ltd": 22.5726, "lng": 88.3639 }
+}
+```
+
+### Example Response
+```json
+{
+  "_id": "ride_id_here",
+  "user": { /* user info */ },
+  "pickup": { /* coordinates */ },
+  "destination": { /* coordinates */ },
+  "vehicleType": "car",
+  "distance": 5,
+  "duration": 12
+}
+
+```
+## Endpoint: `/ride/get-fare`
+
+### Description
+This endpoint calculates the estimated fare based on the pickup and destination.
+
+### Method
+`POST`
+
+### Headers
+- `Authorization`: Bearer token (User, required)
+
+### Request Body
+```json
+{
+  "pickup": { "lat": 22.5726, "lng": 88.3639 },
+  "destination": { "lat": 22.5800, "lng": 88.3700 }
+}
+```
+
+### Example Response
+```json
+{
+  "fare": 120,
+  "distance": 5,
+  "duration": 12
+}
+
+```
+## Endpoint: `/ride/confirm`
+
+### Description
+This endpoint is used by the captain to confirm a ride request.
+
+### Method
+`POST`
+
+### Headers
+- `Authorization`: Bearer token (Captain, required)
+
+### Request Body
+```json
+{
+  "rideId": "ride_id_here",
+  "captainId": "captain_id_here"
+}
+```
+
+### Example Response
+```json
+{
+  "_id": "ride_id_here",
+  "status": "confirmed",
+  "captain": "captain_id_here"
+}
+```
+## Endpoint: `/ride/start-ride`
+
+### Description
+This endpoint is used by the captain to start a ride after verifying the ride OTP.
+
+### Method
+`GET`
+
+### Headers
+- `Authorization`: Bearer token (Captain, required)
+
+### Query Parameters
+- `rideId`: A valid ride ID (required)
+- `otp`:  A string OTP (required)
+
+### Example Bash
+```json
+/ride/start-ride?rideId=ride_id_here&otp=1234
+
+```
+
+### Example Response
+```json
+{
+  "_id": "ride_id_here",
+  "status": "started"
+}
+
+```
+## Endpoint: `/ride/end-ride`
+
+### Description
+This endpoint is used by the captain to end the ride.
+
+### Method
+`POST`
+
+### Headers
+- `Authorization`: Bearer token (Captain, required)
+
+### Example Body
+```json
+{
+  "rideId": "ride_id_here"
+}
+```
+
+### Example Response
+```json
+{
+  "_id": "ride_id_here",
+  "status": "completed"
+}
+```
+
+# Maps API Endpoints
+
+## Endpoint: `/maps/get-coordinates`
+
+### Description
+This endpoint is used to retrieve the geographical coordinates (latitude and longitude) of a provided address.
+
+### Method
+`GET`
+
+### Headers
+- `Authorization`: Bearer token (User required)
+
+### Query Parameters
+- `address:` A valid address string (required)
+
+### Example Bash
+```json
+/maps/get-coordinates?address=Kolkata
+
+```
+
+### Example Response
+```json
+{
+  "lat": 22.5726,
+  "lng": 88.3639
+}
+```
+## Endpoint: `/maps/get-distance-time`
+
+### Description
+This endpoint is used to calculate the distance and estimated travel time between two addresses.
+
+### Method
+`GET`
+
+### Headers
+- `Authorization`: Bearer token (User or Captain, required)
+
+### Query Parameters
+- `origin:` Starting address (required)
+
+- `destination:` Destination address (required)
+
+### Example Bash
+```json
+/maps/get-distance-time?origin=Kolkata&destination=Howrah
+```
+### Example Response
+```json
+{
+  "distance": {
+    "text": "6.5 km",
+    "value": 6500
+  },
+  "duration": {
+    "text": "15 mins",
+    "value": 900
+  }
+}
+```
+## Endpoint: `/maps/get-suggestion`
+
+### Description
+This endpoint is used to retrieve auto-complete suggestions based on partial location input.
+
+### Method
+`GET`
+
+### Headers
+- `Authorization`: Bearer token (User or Captain, required)
+
+### Query Parameters
+- `input:` Partial address string to auto-complete (required)
+
+
+### Example Bash
+```json
+/maps/get-suggestion?input=kol
+```
+### Example Response
+```json
+[
+  "Kolkata, West Bengal, India",
+  "Kolkata Airport, India",
+  "Kolkata Railway Station"
+]
+```
