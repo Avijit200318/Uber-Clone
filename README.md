@@ -4,6 +4,15 @@
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
+## Website Preview
+### Ride Creation
+![ride1](https://github.com/user-attachments/assets/a94a4148-0f57-4f47-8e0f-ba2c27bf0e20)
+
+### Confirm Ride
+![ride2](https://github.com/user-attachments/assets/059c68d0-e1ef-4c9d-b868-07e212583a60)
+
+
+
 
 ## Overview
 
