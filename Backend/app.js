@@ -9,6 +9,8 @@ import captainRoutes from "./routes/captain.route.js";
 import mapsRoutes from "./routes/maps.route.js";
 import rideRoutes from "./routes/ride.route.js";
 
+import path from "path"
+
 dotenv.config();
 
 const app = express();
@@ -21,6 +23,9 @@ app.use(cookieParser());
 
 connectToDB();
 
+// deployment code
+const __dirname = path.resolve();
+
 app.get('/', (req, res) => {
     res.send("hello world");
 })
@@ -31,6 +36,12 @@ app.use("/api/users", userRoutes);
 app.use("/api/captains", captainRoutes);
 app.use("/api/maps", mapsRoutes);
 app.use("/api/ride", rideRoutes);
+
+// api client
+app.use(express.static(path.join(__dirname, '/client/dist')));
+app.get(/^(?!\/api).*/, (req, res) => {
+    res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
+});
 
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500;
