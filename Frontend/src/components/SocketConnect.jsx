@@ -7,11 +7,14 @@ const SocketContext = createContext();
 
 export const useSocket = () => useContext(SocketContext);
 
+const baseUrl = `${window.location.protocol}//${window.location.host}`;
+
+
 export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    newSocket = io(import.meta.env.VITE_BASE_URL);
+    newSocket = io(baseUrl);
     setSocket(newSocket);
 
     newSocket.on("connect", () => {
