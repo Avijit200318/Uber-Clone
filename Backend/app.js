@@ -26,10 +26,6 @@ connectToDB();
 // deployment code
 const __dirname = path.resolve();
 
-app.get('/', (req, res) => {
-    res.send("hello world");
-})
-
 // add new created routes
 
 app.use("/api/users", userRoutes);
