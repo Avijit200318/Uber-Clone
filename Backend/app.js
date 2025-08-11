@@ -33,10 +33,10 @@ app.use("/api/captains", captainRoutes);
 app.use("/api/maps", mapsRoutes);
 app.use("/api/ride", rideRoutes);
 
-// api client
-app.use(express.static(path.join(__dirname, '/client/dist')));
+// deployment code
+app.use(express.static(path.join(__dirname, '/Frontend/dist')));
 app.get(/^(?!\/api).*/, (req, res) => {
-    res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
+    res.sendFile(path.join(__dirname, 'Frontend', 'dist', 'index.html'));
 });
 
 app.use((err, req, res, next) => {
