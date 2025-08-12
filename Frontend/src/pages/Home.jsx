@@ -115,9 +115,17 @@ export default function Home() {
     try {
       if (input.length < 3) return;
       // since we don't want to send too short input
+      const token = localStorage.getItem('token');
+      console.log("token: ", token);
+      if(!token){
+        console.error('No token found, cannot fetch suggestions.');
+        return;
+      }
+
+
       const res = await fetch(`/api/maps/get-suggestion?input=${input}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${token}`,
         }
       });
 
