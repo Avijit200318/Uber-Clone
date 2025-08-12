@@ -121,7 +121,7 @@ export default function Home() {
         console.error('No token found, cannot fetch suggestions.');
         return;
       }
-      const baseUrl = `${window.location.protocol}//${window.location.host}/`;
+      const baseUrl = `${window.location.protocol}//${window.location.host}`;
 
       const res = await fetch(`${baseUrl}/api/maps/get-suggestion?input=${input}`, {
         headers: {
