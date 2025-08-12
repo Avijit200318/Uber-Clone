@@ -51,6 +51,7 @@ export const getDistanceTimeService = async (origin, destination) => {
 };
 
 export const getAutoCompleteSuggestion = async (input) => {
+    consle.log("hit suggestion route");
     if(!input){
         return errorHandler(400, "query is required");
     }
@@ -67,7 +68,8 @@ export const getAutoCompleteSuggestion = async (input) => {
                 lng: parseFloat(place.lon),
             }));
         } else {
-            return [];
+            console.log("no output");
+            return res.json([]);
         }
     } catch (error) {
         throw new Error(`Error fetching autocomplete suggestions: ${error.message}`);
