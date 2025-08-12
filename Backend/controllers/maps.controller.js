@@ -50,6 +50,7 @@ export const getSuggestion = async (req, res, next) => {
 
         const {input} = req.query;
         const suggestion = await getAutoCompleteSuggestion(input);
+        if(suggestion.lenth === 0) return res.status(400).json({message: "empty array"});
         res.status(200).json(suggestion);
     }catch(error){
 
