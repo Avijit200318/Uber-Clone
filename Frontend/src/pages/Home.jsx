@@ -15,6 +15,8 @@ import { useSocket } from '../components/SocketConnect';
 import { useSelector } from 'react-redux';
 import LiveTracking from '../components/LiveTracking';
 
+import { useDebounceCallback } from 'usehooks-ts';
+
 let newSocket;
 export default function Home() {
 
@@ -44,7 +46,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [socket, setSocket] = useState(null);
   const [ride, setRide] = useState(null);
-  console.log(suggestion)
+  console.log("suggestion: ",suggestion)
 
   const vehiclePanelRef = useRef(null);
   const confirmRidePanelRef = useRef(null);
@@ -52,6 +54,9 @@ export default function Home() {
   const waitingForDriverRef = useRef(null);
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
+
+  // debounce time
+  const debounced = useDebounceCallback(setDestination, 400);
 
   newSocket = useSocket();
 
@@ -99,10 +104,12 @@ export default function Home() {
   }
 
   const handleDestinationChange = (e) => {
-    setDestination(e.target.value);
+     debounced(e.target.value)
+    // setDestination(e.target.value);
     setActiveField('destination');
-    fetchSuggestions(e.target.value);
+    // fetchSuggestions(e.target.value);
   }
+
 
   const fetchSuggestions = async (input) => {
     try {
@@ -125,6 +132,10 @@ export default function Home() {
       console.log(error.message);
     }
   }
+
+  useEffect(() => {
+    fetchSuggestions(destination);
+  }, [destination])
 
   useGSAP(() => {
     if (panelOpen) {
@@ -288,7 +299,7 @@ export default function Home() {
           <form onSubmit={handleSumbit} className="relative">
             <div className="line absolute h-16 w-1 top-[25%] left-4 bg-gray-700 rounded-full"></div>
             <input type="text" id='pickup' className="bg-[#eee] px-8 py-2 text-base rounded-lg w-full outline-none" placeholder='Add a pick-up location' onClick={() => setPanelOpen(true)} onChange={handlePickupChange} value={pickup.name} />
-            <input type="text" id='destination' className="bg-[#eee] px-8 py-2 text-base rounded-lg w-full mt-3 outline-none" placeholder='Enter your destination' onClick={() => setPanelOpen(true)} onChange={handleDestinationChange} value={destination.name} />
+            <input type="text" id='destination' className="bg-[#eee] px-8 py-2 text-base rounded-lg w-full mt-3 outline-none" placeholder='Enter your destination' onClick={() => setPanelOpen(true)} onChange={handleDestinationChange}  />
           </form>
           <button onClick={handleFindTrip} disabled={pickup.length === 0 || destination.length === 0} className="bg-black text-white px-4 py-2 rounded-md w-full font-semibold my-4 disabled:bg-[#4b3a3a] relative h-14 overflow-hidden flex items-center justify-center">{loading ?
             <div className="border-4 border-t-4 border-t-white border-gray-300 rounded-full h-8 w-8 animate-spin absolute"></div>
