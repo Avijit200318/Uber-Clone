@@ -16,6 +16,7 @@ import { useSelector } from 'react-redux';
 import LiveTracking from '../components/LiveTracking';
 
 import { useDebounceCallback } from 'usehooks-ts';
+import axios from 'axios';
 
 let newSocket;
 export default function Home() {
@@ -111,30 +112,49 @@ export default function Home() {
   }
 
 
+  // const fetchSuggestions = async (input) => {
+  //   try {
+  //     if (input.length < 3) return;
+  //     // since we don't want to send too short input
+  //     const token = localStorage.getItem('token');
+  //     console.log("token: ", token);
+  //     if(!token){
+  //       console.error('No token found, cannot fetch suggestions.');
+  //       return;
+  //     }
+  //     const baseUrl = `${window.location.protocol}//${window.location.host}`;
+
+  //     const res = await fetch(`${baseUrl}/api/maps/get-suggestion?input=${input}`, {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       }
+  //     });
+
+  //     const data = await res.json();
+  //     if (data.success === false) {
+  //       console.log(data.message);
+  //       return;
+  //     }
+  //     setSuggestion(data);
+  //   }
+  //   catch (error) {
+  //     console.log(error.message);
+  //   }
+  // }
   const fetchSuggestions = async (input) => {
     try {
       if (input.length < 3) return;
-      // since we don't want to send too short input
-      const token = localStorage.getItem('token');
-      console.log("token: ", token);
-      if(!token){
-        console.error('No token found, cannot fetch suggestions.');
-        return;
+      
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(input)}&countrycodes=IN&limit=5`;
+      
+      const response = await axios.get(url);
+      
+      if (response.data.length === 0) {
+          console.log("");
+          return;
       }
-      const baseUrl = `${window.location.protocol}//${window.location.host}`;
-
-      const res = await fetch(`${baseUrl}/api/maps/get-suggestion?input=${input}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        }
-      });
-
-      const data = await res.json();
-      if (data.success === false) {
-        console.log(data.message);
-        return;
-      }
-      setSuggestion(data);
+      console.log("response ",response);
+      setSuggestion(response.data);
     }
     catch (error) {
       console.log(error.message);

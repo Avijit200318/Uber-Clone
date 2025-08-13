@@ -51,7 +51,6 @@ export const getDistanceTimeService = async (origin, destination) => {
 };
 
 export const getAutoCompleteSuggestion = async (input) => {
-    consle.log("hit suggestion route");
     if(!input){
         return errorHandler(400, "query is required");
     }
