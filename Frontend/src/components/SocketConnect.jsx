@@ -7,8 +7,11 @@ const SocketContext = createContext();
 
 export const useSocket = () => useContext(SocketContext);
 
-const baseUrl = `${window.location.protocol}//${window.location.host}`;
-
+// use the bellow line in localhost
+// const baseUrl = import.meta.env.VITE_BASE_URL;
+// use this bellow line in deployment
+const baseUrl = `${window.location.protocol}//${window.location.host}/`;
+console.log("baseurl: ",baseUrl)
 
 export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);

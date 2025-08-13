@@ -556,30 +556,3 @@ This endpoint is used to calculate the distance and estimated travel time betwee
   }
 }
 ```
-## Endpoint: `/maps/get-suggestion`
-
-### Description
-This endpoint is used to retrieve auto-complete suggestions based on partial location input.
-
-### Method
-`GET`
-
-### Headers
-- `Authorization`: Bearer token (User or Captain, required)
-
-### Query Parameters
-- `input:` Partial address string to auto-complete (required)
-
-
-### Example Bash
-```json
-/maps/get-suggestion?input=kol
-```
-### Example Response
-```json
-[
-  "Kolkata, West Bengal, India",
-  "Kolkata Airport, India",
-  "Kolkata Railway Station"
-]
-```

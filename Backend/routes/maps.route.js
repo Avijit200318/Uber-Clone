@@ -41,10 +41,5 @@ router.get("/get-distance-time",
     getDisTime
 );
 
-router.get("/get-suggestion",
-    query('input').isString().isLength({min: 3}),
-    authEitherMiddleware,
-    getSuggestion
-)
 
 export default router;

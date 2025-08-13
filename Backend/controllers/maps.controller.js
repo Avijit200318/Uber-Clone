@@ -40,19 +40,3 @@ export const getDisTime = async (req, res, next) => {
     }
 };
 
-
-export const getSuggestion = async (req, res, next) => {
-    try{
-        const errors = validationResult(req);
-        if(!errors.isEmpty()){
-            return res.status(400).json({error: errors.array()});
-        }
-
-        const {input} = req.query;
-        const suggestion = await getAutoCompleteSuggestion(input);
-        if(suggestion.lenth === 0) return res.status(400).json({message: "empty array"});
-        res.status(200).json(suggestion);
-    }catch(error){
-
-    }
-}

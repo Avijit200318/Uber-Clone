@@ -50,31 +50,6 @@ export const getDistanceTimeService = async (origin, destination) => {
     }
 };
 
-export const getAutoCompleteSuggestion = async (input) => {
-    if(!input){
-        return errorHandler(400, "query is required");
-    }
-
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(input)}&countrycodes=IN&limit=5`;
-
-    try {
-        const response = await axios.get(url);
-
-        if (response.data.length > 0) {
-            return response.data.map((place) => ({
-                name: place.display_name,
-                ltd: parseFloat(place.lat),
-                lng: parseFloat(place.lon),
-            }));
-        } else {
-            console.log("no output");
-            return res.json([]);
-        }
-    } catch (error) {
-        throw new Error(`Error fetching autocomplete suggestions: ${error.message}`);
-    }
-};
-
 export const getCaptainsInTheRadius = async (ltd, lng, radius) => {
     // radius in KM
     const captains = await captainModel.find({

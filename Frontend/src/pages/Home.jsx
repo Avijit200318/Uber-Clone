@@ -110,36 +110,6 @@ export default function Home() {
     // fetchSuggestions(e.target.value);
   }
 
-
-  // const fetchSuggestions = async (input) => {
-  //   try {
-  //     if (input.length < 3) return;
-  //     // since we don't want to send too short input
-  //     const token = localStorage.getItem('token');
-  //     console.log("token: ", token);
-  //     if(!token){
-  //       console.error('No token found, cannot fetch suggestions.');
-  //       return;
-  //     }
-  //     const baseUrl = `${window.location.protocol}//${window.location.host}`;
-
-  //     const res = await fetch(`${baseUrl}/api/maps/get-suggestion?input=${input}`, {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       }
-  //     });
-
-  //     const data = await res.json();
-  //     if (data.success === false) {
-  //       console.log(data.message);
-  //       return;
-  //     }
-  //     setSuggestion(data);
-  //   }
-  //   catch (error) {
-  //     console.log(error.message);
-  //   }
-  // }
   const fetchSuggestions = async (destination) => {
     try {
       if(typeof destination === 'object' && destination.name === ''){
