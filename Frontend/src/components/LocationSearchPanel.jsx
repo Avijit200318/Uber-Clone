@@ -9,12 +9,16 @@ export default function LocationSearchPanel({setPanelOpen, setVehiclePanel, sugg
         setPickup(location);
       }else{
         setDestination(location);
+        const textField = document.querySelector("#destination")
+        // console.log("text: ", textField)
+        textField.value = location.name;
       }
     }
     setSuggestion(null);
   }
 
   console.log("suggestion6: ", suggestion)
+
 
   return (
     <div className='px-3 flex flex-col items-center'>

@@ -47,7 +47,6 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [socket, setSocket] = useState(null);
   const [ride, setRide] = useState(null);
-  console.log("suggestion: ",suggestion)
 
   const vehiclePanelRef = useRef(null);
   const confirmRidePanelRef = useRef(null);
@@ -141,20 +140,34 @@ export default function Home() {
   //     console.log(error.message);
   //   }
   // }
-  const fetchSuggestions = async (input) => {
+  const fetchSuggestions = async (destination) => {
     try {
-      if (input.length < 3) return;
+      if(typeof destination === 'object' && destination.name === ''){
+        return;
+      }
       
-      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(input)}&countrycodes=IN&limit=5`;
+      if (typeof destination === 'string' && destination.length < 3) {
+        setDestination([]);
+        return;
+      }
+      console.log("input ", destination)
+      console.log("first running fetchSuggestion")
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(destination)}&countrycodes=IN&limit=5`;
       
       const response = await axios.get(url);
       
       if (response.data.length === 0) {
-          console.log("");
+          console.log("No suggestion");
           return;
       }
-      console.log("response ",response);
-      setSuggestion(response.data);
+      // console.log("response ",response.data);
+      const formattedData = response.data.map(place => ({
+        name: place.display_name,
+        ltd: parseFloat(place.lat),
+        lng: parseFloat(place.lon)
+      }));
+      // console.log("formated data: ", formattedData)
+      setSuggestion(formattedData);
     }
     catch (error) {
       console.log(error.message);
@@ -327,7 +340,7 @@ export default function Home() {
           <form onSubmit={handleSumbit} className="relative">
             <div className="line absolute h-16 w-1 top-[25%] left-4 bg-gray-700 rounded-full"></div>
             <input type="text" id='pickup' className="bg-[#eee] px-8 py-2 text-base rounded-lg w-full outline-none" placeholder='Add a pick-up location' onClick={() => setPanelOpen(true)} onChange={handlePickupChange} value={pickup.name} />
-            <input type="text" id='destination' className="bg-[#eee] px-8 py-2 text-base rounded-lg w-full mt-3 outline-none" placeholder='Enter your destination' onClick={() => setPanelOpen(true)} onChange={handleDestinationChange}  />
+            <input type="text" id='destination' className="bg-[#eee] px-8 py-2 text-base rounded-lg w-full mt-3 outline-none" placeholder='Enter your destination' onClick={() => setPanelOpen(true)} onChange={handleDestinationChange} />
           </form>
           <button onClick={handleFindTrip} disabled={pickup.length === 0 || destination.length === 0} className="bg-black text-white px-4 py-2 rounded-md w-full font-semibold my-4 disabled:bg-[#4b3a3a] relative h-14 overflow-hidden flex items-center justify-center">{loading ?
             <div className="border-4 border-t-4 border-t-white border-gray-300 rounded-full h-8 w-8 animate-spin absolute"></div>
