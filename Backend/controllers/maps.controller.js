@@ -2,7 +2,6 @@ import { getAddressCordinate } from "../services/maps.service.js";
 import { validationResult } from "express-validator";
 import { errorHandler } from "../middlewares/error.js";
 import { getDistanceTimeService } from "../services/maps.service.js";
-import { getAutoCompleteSuggestion } from "../services/maps.service.js";
 
 export const getCoordinate = async (req, res, next) => {
     const errors = validationResult(req);
