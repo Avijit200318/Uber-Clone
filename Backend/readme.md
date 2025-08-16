@@ -1,3 +1,9 @@
+# Overview
+This Uber Clone is a fully functional ride-booking platform inspired by real-world ride-hailing services. Built with the powerful MERN Stack, integrated with real-time communication via Socket.io, and enhanced with interactive mapping using Leaflet, it provides a seamless user and captain experience.
+
+# ER Diagram
+<img width="4465" height="2962" alt="diagram-export-8-12-2025-9_49_34-PM" src="https://github.com/user-attachments/assets/e349f092-771f-4802-9520-23897f587359" />
+
 # API Documentation
 
 ## Endpoint: `/users/signUp`
